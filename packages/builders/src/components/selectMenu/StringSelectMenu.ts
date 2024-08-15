@@ -1,18 +1,27 @@
 import { ComponentType } from 'discord-api-types/v10';
 import type { APIStringSelectComponent, APISelectMenuOption } from 'discord-api-types/v10';
 import { normalizeArray, type RestOrArray } from '../../util/normalizeArray.js';
-import { jsonOptionValidator, optionsLengthValidator, validateRequiredSelectMenuParameters } from '../Assertions.js';
+import { isValidationEnabled } from '../../util/validation.js';
+import { selectMenuStringPredicate } from '../Assertions.js';
 import { BaseSelectMenuBuilder } from './BaseSelectMenu.js';
 import { StringSelectMenuOptionBuilder } from './StringSelectMenuOption.js';
+
+export interface StringSelectMenuData extends Partial<Omit<APIStringSelectComponent, 'options'>> {
+	options?: StringSelectMenuOptionBuilder[];
+}
 
 /**
  * A builder that creates API-compatible JSON data for string select menus.
  */
 export class StringSelectMenuBuilder extends BaseSelectMenuBuilder<APIStringSelectComponent> {
+	protected override readonly data: StringSelectMenuData;
+
 	/**
-	 * The options within this select menu.
+	 * The options for this select menu.
 	 */
-	public readonly options: StringSelectMenuOptionBuilder[];
+	public get options(): readonly StringSelectMenuOptionBuilder[] | undefined {
+		return this.data.options;
+	}
 
 	/**
 	 * Creates a new select menu from API data.
@@ -45,10 +54,15 @@ export class StringSelectMenuBuilder extends BaseSelectMenuBuilder<APIStringSele
 	 * 	});
 	 * ```
 	 */
-	public constructor(data?: Partial<APIStringSelectComponent>) {
-		const { options, ...initData } = data ?? {};
-		super({ ...initData, type: ComponentType.StringSelect });
-		this.options = options?.map((option: APISelectMenuOption) => new StringSelectMenuOptionBuilder(option)) ?? [];
+	public constructor(data: Partial<APIStringSelectComponent> = {}) {
+		super();
+		const { options = [], ...rest } = data;
+
+		this.data = {
+			...structuredClone(rest),
+			options: options.map((option) => new StringSelectMenuOptionBuilder(option)),
+			type: ComponentType.StringSelect,
+		};
 	}
 
 	/**
@@ -56,16 +70,30 @@ export class StringSelectMenuBuilder extends BaseSelectMenuBuilder<APIStringSele
 	 *
 	 * @param options - The options to add
 	 */
-	public addOptions(...options: RestOrArray<APISelectMenuOption | StringSelectMenuOptionBuilder>) {
+	public addOptions(
+		...options: RestOrArray<
+			| APISelectMenuOption
+			| StringSelectMenuOptionBuilder
+			| ((builder: StringSelectMenuOptionBuilder) => StringSelectMenuOptionBuilder)
+		>
+	) {
 		const normalizedOptions = normalizeArray(options);
-		optionsLengthValidator.parse(this.options.length + normalizedOptions.length);
-		this.options.push(
-			...normalizedOptions.map((normalizedOption) =>
-				normalizedOption instanceof StringSelectMenuOptionBuilder
-					? normalizedOption
-					: new StringSelectMenuOptionBuilder(jsonOptionValidator.parse(normalizedOption)),
-			),
+
+		this.data.options ??= [];
+		this.data.options.push(
+			...normalizedOptions.map((option) => {
+				if (option instanceof StringSelectMenuOptionBuilder) {
+					return option;
+				}
+
+				if (typeof option === 'function') {
+					return option(new StringSelectMenuOptionBuilder());
+				}
+
+				return new StringSelectMenuOptionBuilder(option);
+			}),
 		);
+
 		return this;
 	}
 
@@ -74,8 +102,14 @@ export class StringSelectMenuBuilder extends BaseSelectMenuBuilder<APIStringSele
 	 *
 	 * @param options - The options to set
 	 */
-	public setOptions(...options: RestOrArray<APISelectMenuOption | StringSelectMenuOptionBuilder>) {
-		return this.spliceOptions(0, this.options.length, ...options);
+	public setOptions(
+		...options: RestOrArray<
+			| APISelectMenuOption
+			| StringSelectMenuOptionBuilder
+			| ((builder: StringSelectMenuOptionBuilder) => StringSelectMenuOptionBuilder)
+		>
+	) {
+		return this.spliceOptions(0, this.options?.length ?? 0, ...normalizeArray(options));
 	}
 
 	/**
@@ -108,36 +142,45 @@ export class StringSelectMenuBuilder extends BaseSelectMenuBuilder<APIStringSele
 	public spliceOptions(
 		index: number,
 		deleteCount: number,
-		...options: RestOrArray<APISelectMenuOption | StringSelectMenuOptionBuilder>
+		...options: (
+			| APISelectMenuOption
+			| StringSelectMenuOptionBuilder
+			| ((builder: StringSelectMenuOptionBuilder) => StringSelectMenuOptionBuilder)
+		)[]
 	) {
-		const normalizedOptions = normalizeArray(options);
+		const resolved = options.map((option) => {
+			if (option instanceof StringSelectMenuOptionBuilder) {
+				return option;
+			}
 
-		const clone = [...this.options];
+			if (typeof option === 'function') {
+				return option(new StringSelectMenuOptionBuilder());
+			}
 
-		clone.splice(
-			index,
-			deleteCount,
-			...normalizedOptions.map((normalizedOption) =>
-				normalizedOption instanceof StringSelectMenuOptionBuilder
-					? normalizedOption
-					: new StringSelectMenuOptionBuilder(jsonOptionValidator.parse(normalizedOption)),
-			),
-		);
+			return new StringSelectMenuOptionBuilder(option);
+		});
 
-		optionsLengthValidator.parse(clone.length);
-		this.options.splice(0, this.options.length, ...clone);
+		this.data.options ??= [];
+		this.data.options.splice(index, deleteCount, ...resolved);
+
 		return this;
 	}
 
 	/**
-	 * {@inheritDoc BaseSelectMenuBuilder.toJSON}
+	 * {@inheritDoc ComponentBuilder.toJSON}
 	 */
-	public override toJSON(): APIStringSelectComponent {
-		validateRequiredSelectMenuParameters(this.options, this.data.custom_id);
+	public override toJSON(validationOverride?: boolean): APIStringSelectComponent {
+		const { options, ...rest } = this.data;
+		const data = {
+			...(structuredClone(rest) as APIStringSelectComponent),
+			// selectMenuStringPredicate covers the validation of options
+			options: options?.map((option) => option.toJSON(false)),
+		};
 
-		return {
-			...this.data,
-			options: this.options.map((option) => option.toJSON()),
-		} as APIStringSelectComponent;
+		if (validationOverride ?? isValidationEnabled()) {
+			selectMenuStringPredicate.parse(data);
+		}
+
+		return data as APIStringSelectComponent;
 	}
 }

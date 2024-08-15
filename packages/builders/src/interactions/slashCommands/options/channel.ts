@@ -1,26 +1,19 @@
-import { ApplicationCommandOptionType, type APIApplicationCommandChannelOption } from 'discord-api-types/v10';
-import { mix } from 'ts-mixer';
+import { ApplicationCommandOptionType } from 'discord-api-types/v10';
+import { Mixin } from 'ts-mixer';
+import { channelOptionPredicate } from '../Assertions.js';
 import { ApplicationCommandOptionBase } from '../mixins/ApplicationCommandOptionBase.js';
 import { ApplicationCommandOptionChannelTypesMixin } from '../mixins/ApplicationCommandOptionChannelTypesMixin.js';
 
 /**
  * A slash command channel option.
  */
-@mix(ApplicationCommandOptionChannelTypesMixin)
-export class SlashCommandChannelOption extends ApplicationCommandOptionBase {
-	/**
-	 * The type of this option.
-	 */
-	public override readonly type = ApplicationCommandOptionType.Channel as const;
+export class SlashCommandChannelOption extends Mixin(
+	ApplicationCommandOptionBase,
+	ApplicationCommandOptionChannelTypesMixin,
+) {
+	protected override readonly predicate = channelOptionPredicate;
 
-	/**
-	 * {@inheritDoc ApplicationCommandOptionBase.toJSON}
-	 */
-	public toJSON(): APIApplicationCommandChannelOption {
-		this.runRequiredValidations();
-
-		return { ...this };
+	public constructor() {
+		super(ApplicationCommandOptionType.Channel);
 	}
 }
-
-export interface SlashCommandChannelOption extends ApplicationCommandOptionChannelTypesMixin {}

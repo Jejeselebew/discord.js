@@ -1,22 +1,34 @@
-import type { APIApplicationCommandBasicOption, ApplicationCommandOptionType } from 'discord-api-types/v10';
-import { validateRequiredParameters, validateRequired, validateLocalizationMap } from '../Assertions.js';
-import { SharedNameAndDescription } from './NameAndDescription.js';
+import type { JSONEncodable } from '@discordjs/util';
+import type {
+	APIApplicationCommandBasicOption,
+	APIApplicationCommandOption,
+	ApplicationCommandOptionType,
+} from 'discord-api-types/v10';
+import type { z } from 'zod';
+import { isValidationEnabled } from '../../../util/validation.js';
+import { basicOptionPredicate } from '../Assertions.js';
+import type { SharedNameAndDescriptionData } from './SharedNameAndDescription.js';
+import { SharedNameAndDescription } from './SharedNameAndDescription.js';
+
+export interface ApplicationCommandOptionBaseData extends Partial<Pick<APIApplicationCommandOption, 'required'>> {
+	type: ApplicationCommandOptionType;
+}
 
 /**
  * The base application command option builder that contains common symbols for application command builders.
  */
-export abstract class ApplicationCommandOptionBase extends SharedNameAndDescription {
-	/**
-	 * The type of this option.
-	 */
-	public abstract readonly type: ApplicationCommandOptionType;
+export abstract class ApplicationCommandOptionBase
+	extends SharedNameAndDescription
+	implements JSONEncodable<APIApplicationCommandBasicOption>
+{
+	protected readonly predicate: z.ZodTypeAny = basicOptionPredicate;
 
-	/**
-	 * Whether this option is required.
-	 *
-	 * @defaultValue `false`
-	 */
-	public readonly required: boolean = false;
+	protected declare readonly data: ApplicationCommandOptionBaseData & SharedNameAndDescriptionData;
+
+	public constructor(type: ApplicationCommandOptionType) {
+		super();
+		this.data.type = type;
+	}
 
 	/**
 	 * Sets whether this option is required.
@@ -24,34 +36,24 @@ export abstract class ApplicationCommandOptionBase extends SharedNameAndDescript
 	 * @param required - Whether this option should be required
 	 */
 	public setRequired(required: boolean) {
-		// Assert that you actually passed a boolean
-		validateRequired(required);
-
-		Reflect.set(this, 'required', required);
-
+		this.data.required = required;
 		return this;
 	}
 
 	/**
 	 * Serializes this builder to API-compatible JSON data.
 	 *
-	 * @remarks
-	 * This method runs validations on the data before serializing it.
-	 * As such, it may throw an error if the data is invalid.
+	 * Note that by disabling validation, there is no guarantee that the resulting object will be valid.
+	 *
+	 * @param validationOverride - Force validation to run/not run regardless of your global preference
 	 */
-	public abstract toJSON(): APIApplicationCommandBasicOption;
+	public toJSON(validationOverride?: boolean): APIApplicationCommandBasicOption {
+		const clone = structuredClone(this.data);
 
-	/**
-	 * This method runs required validators on this builder.
-	 */
-	protected runRequiredValidations() {
-		validateRequiredParameters(this.name, this.description, []);
+		if (validationOverride ?? isValidationEnabled()) {
+			this.predicate.parse(clone);
+		}
 
-		// Validate localizations
-		validateLocalizationMap(this.name_localizations);
-		validateLocalizationMap(this.description_localizations);
-
-		// Assert that you actually passed a boolean
-		validateRequired(this.required);
+		return clone as APIApplicationCommandBasicOption;
 	}
 }

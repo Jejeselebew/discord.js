@@ -8,21 +8,16 @@ import {
 	type ButtonStyle,
 	type Snowflake,
 } from 'discord-api-types/v10';
-import {
-	buttonLabelValidator,
-	buttonStyleValidator,
-	customIdValidator,
-	disabledValidator,
-	emojiValidator,
-	urlValidator,
-	validateRequiredButtonParameters,
-} from '../Assertions.js';
+import { isValidationEnabled } from '../../util/validation.js';
+import { buttonPredicate } from '../Assertions.js';
 import { ComponentBuilder } from '../Component.js';
 
 /**
  * A builder that creates API-compatible JSON data for buttons.
  */
 export class ButtonBuilder extends ComponentBuilder<APIButtonComponent> {
+	private readonly data: Partial<APIButtonComponent>;
+
 	/**
 	 * Creates a new button from API data.
 	 *
@@ -51,8 +46,9 @@ export class ButtonBuilder extends ComponentBuilder<APIButtonComponent> {
 	 * 	.setCustomId('another cool button');
 	 * ```
 	 */
-	public constructor(data?: Partial<APIButtonComponent>) {
-		super({ type: ComponentType.Button, ...data });
+	public constructor(data: Partial<APIButtonComponent> = {}) {
+		super();
+		this.data = { ...structuredClone(data), type: ComponentType.Button };
 	}
 
 	/**
@@ -61,7 +57,7 @@ export class ButtonBuilder extends ComponentBuilder<APIButtonComponent> {
 	 * @param style - The style to use
 	 */
 	public setStyle(style: ButtonStyle) {
-		this.data.style = buttonStyleValidator.parse(style);
+		this.data.style = style;
 		return this;
 	}
 
@@ -74,7 +70,7 @@ export class ButtonBuilder extends ComponentBuilder<APIButtonComponent> {
 	 * @param url - The URL to use
 	 */
 	public setURL(url: string) {
-		(this.data as APIButtonComponentWithURL).url = urlValidator.parse(url);
+		(this.data as APIButtonComponentWithURL).url = url;
 		return this;
 	}
 
@@ -86,7 +82,7 @@ export class ButtonBuilder extends ComponentBuilder<APIButtonComponent> {
 	 * @param customId - The custom id to use
 	 */
 	public setCustomId(customId: string) {
-		(this.data as APIButtonComponentWithCustomId).custom_id = customIdValidator.parse(customId);
+		(this.data as APIButtonComponentWithCustomId).custom_id = customId;
 		return this;
 	}
 
@@ -107,7 +103,15 @@ export class ButtonBuilder extends ComponentBuilder<APIButtonComponent> {
 	 * @param emoji - The emoji to use
 	 */
 	public setEmoji(emoji: APIMessageComponentEmoji) {
-		(this.data as Exclude<APIButtonComponent, APIButtonComponentWithSKUId>).emoji = emojiValidator.parse(emoji);
+		(this.data as Exclude<APIButtonComponent, APIButtonComponentWithSKUId>).emoji = emoji;
+		return this;
+	}
+
+	/**
+	 * Clears the emoji on this button.
+	 */
+	public clearEmoji() {
+		(this.data as Exclude<APIButtonComponent, APIButtonComponentWithSKUId>).emoji = undefined;
 		return this;
 	}
 
@@ -117,7 +121,7 @@ export class ButtonBuilder extends ComponentBuilder<APIButtonComponent> {
 	 * @param disabled - Whether to disable this button
 	 */
 	public setDisabled(disabled = true) {
-		this.data.disabled = disabledValidator.parse(disabled);
+		this.data.disabled = disabled;
 		return this;
 	}
 
@@ -127,25 +131,28 @@ export class ButtonBuilder extends ComponentBuilder<APIButtonComponent> {
 	 * @param label - The label to use
 	 */
 	public setLabel(label: string) {
-		(this.data as Exclude<APIButtonComponent, APIButtonComponentWithSKUId>).label = buttonLabelValidator.parse(label);
+		(this.data as Exclude<APIButtonComponent, APIButtonComponentWithSKUId>).label = label;
+		return this;
+	}
+
+	/**
+	 * Clears the label on this button.
+	 */
+	public clearLabel() {
+		(this.data as Exclude<APIButtonComponent, APIButtonComponentWithSKUId>).label = undefined;
 		return this;
 	}
 
 	/**
 	 * {@inheritDoc ComponentBuilder.toJSON}
 	 */
-	public toJSON(): APIButtonComponent {
-		validateRequiredButtonParameters(
-			this.data.style,
-			(this.data as Exclude<APIButtonComponent, APIButtonComponentWithSKUId>).label,
-			(this.data as Exclude<APIButtonComponent, APIButtonComponentWithSKUId>).emoji,
-			(this.data as APIButtonComponentWithCustomId).custom_id,
-			(this.data as APIButtonComponentWithSKUId).sku_id,
-			(this.data as APIButtonComponentWithURL).url,
-		);
+	public override toJSON(validationOverride?: boolean): APIButtonComponent {
+		const clone = structuredClone(this.data);
 
-		return {
-			...this.data,
-		} as APIButtonComponent;
+		if (validationOverride ?? isValidationEnabled()) {
+			buttonPredicate.parse(clone);
+		}
+
+		return clone as APIButtonComponent;
 	}
 }

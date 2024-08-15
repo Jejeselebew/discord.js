@@ -50,10 +50,10 @@ const rowWithSelectMenuData: APIActionRowComponent<APIMessageActionRowComponent>
 describe('Action Row Components', () => {
 	describe('Assertion Tests', () => {
 		test('GIVEN valid components THEN do not throw', () => {
-			expect(() => new ActionRowBuilder().addComponents(new ButtonBuilder())).not.toThrowError();
-			expect(() => new ActionRowBuilder().setComponents(new ButtonBuilder())).not.toThrowError();
-			expect(() => new ActionRowBuilder().addComponents([new ButtonBuilder()])).not.toThrowError();
-			expect(() => new ActionRowBuilder().setComponents([new ButtonBuilder()])).not.toThrowError();
+			expect(() =>
+				new ActionRowBuilder().addButtonComponents(new ButtonBuilder(), new ButtonBuilder()),
+			).not.toThrowError();
+			expect(() => new ActionRowBuilder().addButtonComponents([new ButtonBuilder()])).not.toThrowError();
 		});
 
 		test('GIVEN valid JSON input THEN valid JSON output is given', () => {
@@ -72,22 +72,10 @@ describe('Action Row Components', () => {
 						style: ButtonStyle.Link,
 						url: 'https://google.com',
 					},
-					{
-						type: ComponentType.StringSelect,
-						placeholder: 'test',
-						custom_id: 'test',
-						options: [
-							{
-								label: 'option',
-								value: 'option',
-							},
-						],
-					},
 				],
 			};
 
 			expect(new ActionRowBuilder(actionRowData).toJSON()).toEqual(actionRowData);
-			expect(new ActionRowBuilder().toJSON()).toEqual({ type: ComponentType.ActionRow, components: [] });
 			expect(() => createComponentBuilder({ type: ComponentType.ActionRow, components: [] })).not.toThrowError();
 		});
 
@@ -128,7 +116,6 @@ describe('Action Row Components', () => {
 
 			expect(new ActionRowBuilder(rowWithButtonData).toJSON()).toEqual(rowWithButtonData);
 			expect(new ActionRowBuilder(rowWithSelectMenuData).toJSON()).toEqual(rowWithSelectMenuData);
-			expect(new ActionRowBuilder().toJSON()).toEqual({ type: ComponentType.ActionRow, components: [] });
 			expect(() => createComponentBuilder({ type: ComponentType.ActionRow, components: [] })).not.toThrowError();
 		});
 
@@ -147,10 +134,9 @@ describe('Action Row Components', () => {
 					new StringSelectMenuOptionBuilder().setLabel('two').setValue('two'),
 				]);
 
-			expect(new ActionRowBuilder().addComponents(button).toJSON()).toEqual(rowWithButtonData);
-			expect(new ActionRowBuilder().addComponents(selectMenu).toJSON()).toEqual(rowWithSelectMenuData);
-			expect(new ActionRowBuilder().addComponents([button]).toJSON()).toEqual(rowWithButtonData);
-			expect(new ActionRowBuilder().addComponents([selectMenu]).toJSON()).toEqual(rowWithSelectMenuData);
+			expect(new ActionRowBuilder().addButtonComponents(button).toJSON()).toEqual(rowWithButtonData);
+			expect(new ActionRowBuilder().addStringSelectMenuComponent(selectMenu).toJSON()).toEqual(rowWithSelectMenuData);
+			expect(new ActionRowBuilder().addButtonComponents([button]).toJSON()).toEqual(rowWithButtonData);
 		});
 	});
 });

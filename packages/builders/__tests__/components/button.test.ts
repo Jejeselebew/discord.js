@@ -5,7 +5,6 @@ import {
 	type APIButtonComponentWithURL,
 } from 'discord-api-types/v10';
 import { describe, test, expect } from 'vitest';
-import { buttonLabelValidator, buttonStyleValidator } from '../../src/components/Assertions.js';
 import { ButtonBuilder } from '../../src/components/button/Button.js';
 
 const buttonComponent = () => new ButtonBuilder();
@@ -15,26 +14,6 @@ const longStr =
 
 describe('Button Components', () => {
 	describe('Assertion Tests', () => {
-		test('GIVEN valid label THEN validator does not throw', () => {
-			expect(() => buttonLabelValidator.parse('foobar')).not.toThrowError();
-		});
-
-		test('GIVEN invalid label THEN validator does throw', () => {
-			expect(() => buttonLabelValidator.parse(null)).toThrowError();
-			expect(() => buttonLabelValidator.parse('')).toThrowError();
-
-			expect(() => buttonLabelValidator.parse(longStr)).toThrowError();
-		});
-
-		test('GIVEN valid style THEN validator does not throw', () => {
-			expect(() => buttonStyleValidator.parse(3)).not.toThrowError();
-			expect(() => buttonStyleValidator.parse(ButtonStyle.Secondary)).not.toThrowError();
-		});
-
-		test('GIVEN invalid style THEN validator does throw', () => {
-			expect(() => buttonStyleValidator.parse(7)).toThrowError();
-		});
-
 		test('GIVEN valid fields THEN builder does not throw', () => {
 			expect(() =>
 				buttonComponent().setCustomId('custom').setStyle(ButtonStyle.Primary).setLabel('test'),
@@ -43,6 +22,7 @@ describe('Button Components', () => {
 			expect(() => {
 				const button = buttonComponent()
 					.setCustomId('custom')
+					.setLabel('test')
 					.setStyle(ButtonStyle.Primary)
 					.setDisabled(true)
 					.setEmoji({ name: 'test' });
@@ -60,7 +40,7 @@ describe('Button Components', () => {
 
 		test('GIVEN invalid fields THEN build does throw', () => {
 			expect(() => {
-				buttonComponent().setCustomId(longStr);
+				buttonComponent().setCustomId(longStr).toJSON();
 			}).toThrowError();
 
 			expect(() => {
@@ -148,14 +128,14 @@ describe('Button Components', () => {
 			}).toThrowError();
 
 			// @ts-expect-error: Invalid style
-			expect(() => buttonComponent().setStyle(24)).toThrowError();
-			expect(() => buttonComponent().setLabel(longStr)).toThrowError();
+			expect(() => buttonComponent().setCustomId('hi').setStyle(24).toJSON()).toThrowError();
+			expect(() => buttonComponent().setCustomId('hi').setLabel(longStr).toJSON()).toThrowError();
 			// @ts-expect-error: Invalid parameter for disabled
-			expect(() => buttonComponent().setDisabled(0)).toThrowError();
+			expect(() => buttonComponent().setCustomId('hi').setDisabled(0).toJSON()).toThrowError();
 			// @ts-expect-error: Invalid emoji
-			expect(() => buttonComponent().setEmoji('foo')).toThrowError();
+			expect(() => buttonComponent().setCustomId('hi').setEmoji('foo').toJSON()).toThrowError();
 
-			expect(() => buttonComponent().setURL('foobar')).toThrowError();
+			expect(() => buttonComponent().setCustomId('hi').setURL('foobar').toJSON()).toThrowError();
 		});
 
 		test('GiVEN valid input THEN valid JSON outputs are given', () => {

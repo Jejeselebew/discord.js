@@ -1,10 +1,6 @@
 import { ComponentType, type APIMessageComponent, type APIModalComponent } from 'discord-api-types/v10';
-import {
-	ActionRowBuilder,
-	type AnyComponentBuilder,
-	type MessageComponentBuilder,
-	type ModalComponentBuilder,
-} from './ActionRow.js';
+import { ActionRowBuilder } from './ActionRow.js';
+import type { AnyAPIActionRowComponent } from './Component.js';
 import { ComponentBuilder } from './Component.js';
 import { ButtonBuilder } from './button/Button.js';
 import { ChannelSelectMenuBuilder } from './selectMenu/ChannelSelectMenu.js';
@@ -15,13 +11,44 @@ import { UserSelectMenuBuilder } from './selectMenu/UserSelectMenu.js';
 import { TextInputBuilder } from './textInput/TextInput.js';
 
 /**
+ * The builders that may be used for messages.
+ */
+export type MessageComponentBuilder = ActionRowBuilder | MessageActionRowComponentBuilder;
+
+/**
+ * The builders that may be used for modals.
+ */
+export type ModalComponentBuilder = ActionRowBuilder | ModalActionRowComponentBuilder;
+
+/**
+ * The builders that may be used within an action row for messages.
+ */
+export type MessageActionRowComponentBuilder =
+	| ButtonBuilder
+	| ChannelSelectMenuBuilder
+	| MentionableSelectMenuBuilder
+	| RoleSelectMenuBuilder
+	| StringSelectMenuBuilder
+	| UserSelectMenuBuilder;
+
+/**
+ * The builders that may be used within an action row for modals.
+ */
+export type ModalActionRowComponentBuilder = TextInputBuilder;
+
+/**
+ * Any builder.
+ */
+export type AnyActionRowComponentBuilder = MessageActionRowComponentBuilder | ModalActionRowComponentBuilder;
+
+/**
  * Components here are mapped to their respective builder.
  */
 export interface MappedComponentTypes {
 	/**
 	 * The action row component type is associated with an {@link ActionRowBuilder}.
 	 */
-	[ComponentType.ActionRow]: ActionRowBuilder<AnyComponentBuilder>;
+	[ComponentType.ActionRow]: ActionRowBuilder;
 	/**
 	 * The button component type is associated with a {@link ButtonBuilder}.
 	 */
@@ -75,7 +102,7 @@ export function createComponentBuilder<ComponentBuilder extends MessageComponent
 
 export function createComponentBuilder(
 	data: APIMessageComponent | APIModalComponent | MessageComponentBuilder,
-): ComponentBuilder {
+): ComponentBuilder<AnyAPIActionRowComponent> {
 	if (data instanceof ComponentBuilder) {
 		return data;
 	}

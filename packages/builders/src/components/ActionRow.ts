@@ -1,68 +1,39 @@
 /* eslint-disable jsdoc/check-param-names */
 
-import {
-	type APIActionRowComponent,
-	ComponentType,
-	type APIMessageActionRowComponent,
-	type APIModalActionRowComponent,
-	type APIActionRowComponentTypes,
-} from 'discord-api-types/v10';
+import { ComponentType, type APIActionRowComponent, type APIActionRowComponentTypes } from 'discord-api-types/v10';
 import { normalizeArray, type RestOrArray } from '../util/normalizeArray.js';
+import { isValidationEnabled } from '../util/validation.js';
+import { actionRowPredicate } from './Assertions.js';
 import { ComponentBuilder } from './Component.js';
+import type { AnyActionRowComponentBuilder } from './Components.js';
 import { createComponentBuilder } from './Components.js';
-import type { ButtonBuilder } from './button/Button.js';
-import type { ChannelSelectMenuBuilder } from './selectMenu/ChannelSelectMenu.js';
-import type { MentionableSelectMenuBuilder } from './selectMenu/MentionableSelectMenu.js';
-import type { RoleSelectMenuBuilder } from './selectMenu/RoleSelectMenu.js';
-import type { StringSelectMenuBuilder } from './selectMenu/StringSelectMenu.js';
-import type { UserSelectMenuBuilder } from './selectMenu/UserSelectMenu.js';
-import type { TextInputBuilder } from './textInput/TextInput.js';
+import { ButtonBuilder } from './button/Button.js';
+import { ChannelSelectMenuBuilder } from './selectMenu/ChannelSelectMenu.js';
+import { MentionableSelectMenuBuilder } from './selectMenu/MentionableSelectMenu.js';
+import { RoleSelectMenuBuilder } from './selectMenu/RoleSelectMenu.js';
+import { StringSelectMenuBuilder } from './selectMenu/StringSelectMenu.js';
+import { UserSelectMenuBuilder } from './selectMenu/UserSelectMenu.js';
+import { TextInputBuilder } from './textInput/TextInput.js';
 
-/**
- * The builders that may be used for messages.
- */
-export type MessageComponentBuilder =
-	| ActionRowBuilder<MessageActionRowComponentBuilder>
-	| MessageActionRowComponentBuilder;
-
-/**
- * The builders that may be used for modals.
- */
-export type ModalComponentBuilder = ActionRowBuilder<ModalActionRowComponentBuilder> | ModalActionRowComponentBuilder;
-
-/**
- * The builders that may be used within an action row for messages.
- */
-export type MessageActionRowComponentBuilder =
-	| ButtonBuilder
-	| ChannelSelectMenuBuilder
-	| MentionableSelectMenuBuilder
-	| RoleSelectMenuBuilder
-	| StringSelectMenuBuilder
-	| UserSelectMenuBuilder;
-
-/**
- * The builders that may be used within an action row for modals.
- */
-export type ModalActionRowComponentBuilder = TextInputBuilder;
-
-/**
- * Any builder.
- */
-export type AnyComponentBuilder = MessageActionRowComponentBuilder | ModalActionRowComponentBuilder;
+export interface ActionRowBuilderData
+	extends Partial<Omit<APIActionRowComponent<APIActionRowComponentTypes>, 'components'>> {
+	components?: AnyActionRowComponentBuilder[];
+}
 
 /**
  * A builder that creates API-compatible JSON data for action rows.
  *
  * @typeParam ComponentType - The types of components this action row holds
  */
-export class ActionRowBuilder<ComponentType extends AnyComponentBuilder> extends ComponentBuilder<
-	APIActionRowComponent<APIMessageActionRowComponent | APIModalActionRowComponent>
-> {
+export class ActionRowBuilder extends ComponentBuilder<APIActionRowComponent<APIActionRowComponentTypes>> {
+	private readonly data: ActionRowBuilderData;
+
 	/**
 	 * The components within this action row.
 	 */
-	public readonly components: ComponentType[];
+	public get components(): readonly AnyActionRowComponentBuilder[] | undefined {
+		return this.data.components;
+	}
 
 	/**
 	 * Creates a new action row from API data.
@@ -99,37 +70,122 @@ export class ActionRowBuilder<ComponentType extends AnyComponentBuilder> extends
 	 * ```
 	 */
 	public constructor({ components, ...data }: Partial<APIActionRowComponent<APIActionRowComponentTypes>> = {}) {
-		super({ type: ComponentType.ActionRow, ...data });
-		this.components = (components?.map((component) => createComponentBuilder(component)) ?? []) as ComponentType[];
+		super();
+		this.data = {
+			...structuredClone(data),
+			type: ComponentType.ActionRow,
+			components: components?.map((component) => createComponentBuilder(component)),
+		};
 	}
 
 	/**
-	 * Adds components to this action row.
+	 * Adds a button to this action row.
 	 *
-	 * @param components - The components to add
+	 * @param input - A function that returns an option builder or an already built builder
 	 */
-	public addComponents(...components: RestOrArray<ComponentType>) {
-		this.components.push(...normalizeArray(components));
+	public addButtonComponents(...input: RestOrArray<ButtonBuilder | ((builder: ButtonBuilder) => ButtonBuilder)>): this {
+		const normalized = normalizeArray(input);
+		for (const button of normalized) {
+			this.sharedAddComponent(button, ButtonBuilder);
+		}
+
 		return this;
 	}
 
 	/**
-	 * Sets components for this action row.
+	 * Adds a channel select menu to this action row.
 	 *
-	 * @param components - The components to set
+	 * @param input - A function that returns a component builder or an already built builder
 	 */
-	public setComponents(...components: RestOrArray<ComponentType>) {
-		this.components.splice(0, this.components.length, ...normalizeArray(components));
-		return this;
+	public addChannelSelectMenuComponent(
+		input: ChannelSelectMenuBuilder | ((builder: ChannelSelectMenuBuilder) => ChannelSelectMenuBuilder),
+	): this {
+		return this.sharedAddComponent(input, ChannelSelectMenuBuilder);
+	}
+
+	/**
+	 * Adds a mentionable select menu to this action row.
+	 *
+	 * @param input - A function that returns a component builder or an already built builder
+	 */
+	public addMentionableSelectMenuComponent(
+		input: MentionableSelectMenuBuilder | ((builder: MentionableSelectMenuBuilder) => MentionableSelectMenuBuilder),
+	): this {
+		return this.sharedAddComponent(input, MentionableSelectMenuBuilder);
+	}
+
+	/**
+	 * Adds a role select menu to this action row.
+	 *
+	 * @param input - A function that returns a component builder or an already built builder
+	 */
+	public addRoleSelectMenuComponent(
+		input: RoleSelectMenuBuilder | ((builder: RoleSelectMenuBuilder) => RoleSelectMenuBuilder),
+	): this {
+		return this.sharedAddComponent(input, RoleSelectMenuBuilder);
+	}
+
+	/**
+	 * Adds a string select menu to this action row.
+	 *
+	 * @param input - A function that returns a component builder or an already built builder
+	 */
+	public addStringSelectMenuComponent(
+		input: StringSelectMenuBuilder | ((builder: StringSelectMenuBuilder) => StringSelectMenuBuilder),
+	): this {
+		return this.sharedAddComponent(input, StringSelectMenuBuilder);
+	}
+
+	/**
+	 * Adds a user select menu to this action row.
+	 *
+	 * @param input - A function that returns a component builder or an already built builder
+	 */
+	public addUserSelectMenuComponent(
+		input: UserSelectMenuBuilder | ((builder: UserSelectMenuBuilder) => UserSelectMenuBuilder),
+	): this {
+		return this.sharedAddComponent(input, UserSelectMenuBuilder);
+	}
+
+	/**
+	 * Adds a text input to this action row.
+	 *
+	 * @param input - A function that returns a component builder or an already built builder
+	 */
+	public addTextInputComponent(input: TextInputBuilder | ((builder: TextInputBuilder) => TextInputBuilder)): this {
+		return this.sharedAddComponent(input, TextInputBuilder);
 	}
 
 	/**
 	 * {@inheritDoc ComponentBuilder.toJSON}
 	 */
-	public toJSON(): APIActionRowComponent<ReturnType<ComponentType['toJSON']>> {
-		return {
-			...this.data,
-			components: this.components.map((component) => component.toJSON()),
-		} as APIActionRowComponent<ReturnType<ComponentType['toJSON']>>;
+	public override toJSON(validationOverride?: boolean): APIActionRowComponent<APIActionRowComponentTypes> {
+		const { components, ...rest } = this.data;
+
+		const data = {
+			...structuredClone(rest),
+			components: this.data.components?.map((component) => component.toJSON(validationOverride)),
+		};
+
+		if (validationOverride ?? isValidationEnabled()) {
+			actionRowPredicate.parse(data);
+		}
+
+		return data as APIActionRowComponent<APIActionRowComponentTypes>;
+	}
+
+	/**
+	 * @internal
+	 */
+	private sharedAddComponent<Component extends AnyActionRowComponentBuilder>(
+		input: Component | ((builder: Component) => Component),
+		Instance: new () => Component,
+	) {
+		this.data.components ??= [];
+
+		const result = typeof input === 'function' ? input(new Instance()) : input;
+		this.data.components.push(result);
+
+		return this;
 	}
 }
