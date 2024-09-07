@@ -49,5 +49,5 @@ export const embedPredicate = z
 		(value) => {
 			return Object.keys(value).length > 0;
 		},
-		{ message: 'Embed must have at least one field' },
+		{ message: 'Embed must have at least one property set' },
 	);
