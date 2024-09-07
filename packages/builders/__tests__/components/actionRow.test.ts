@@ -138,5 +138,35 @@ describe('Action Row Components', () => {
 			expect(new ActionRowBuilder().addStringSelectMenuComponent(selectMenu).toJSON()).toEqual(rowWithSelectMenuData);
 			expect(new ActionRowBuilder().addButtonComponents([button]).toJSON()).toEqual(rowWithButtonData);
 		});
+
+		test('GIVEN 2 select menus THEN it throws', () => {
+			const selectMenu = new StringSelectMenuBuilder()
+				.setCustomId('1234')
+				.setOptions(
+					new StringSelectMenuOptionBuilder().setLabel('one').setValue('one'),
+					new StringSelectMenuOptionBuilder().setLabel('two').setValue('two'),
+				);
+
+			expect(() =>
+				new ActionRowBuilder()
+					.addStringSelectMenuComponent(selectMenu)
+					.addStringSelectMenuComponent(selectMenu)
+					.toJSON(),
+			).toThrowError();
+		});
+
+		test('GIVEN a button and a select menu THEN it throws', () => {
+			const button = new ButtonBuilder().setLabel('test').setStyle(ButtonStyle.Primary).setCustomId('123');
+			const selectMenu = new StringSelectMenuBuilder()
+				.setCustomId('1234')
+				.setOptions(
+					new StringSelectMenuOptionBuilder().setLabel('one').setValue('one'),
+					new StringSelectMenuOptionBuilder().setLabel('two').setValue('two'),
+				);
+
+			expect(() =>
+				new ActionRowBuilder().addStringSelectMenuComponent(selectMenu).addButtonComponents(button).toJSON(),
+			).toThrowError();
+		});
 	});
 });
