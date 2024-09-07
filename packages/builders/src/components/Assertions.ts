@@ -66,6 +66,7 @@ export const selectMenuChannelPredicate = selectMenuBasePredicate.extend({
 	default_values: z
 		.object({ id: z.string(), type: z.literal(SelectMenuDefaultValueType.Channel) })
 		.array()
+		.max(25)
 		.optional(),
 });
 
@@ -77,6 +78,7 @@ export const selectMenuMentionablePredicate = selectMenuBasePredicate.extend({
 			type: z.union([z.literal(SelectMenuDefaultValueType.Role), z.literal(SelectMenuDefaultValueType.User)]),
 		})
 		.array()
+		.max(25)
 		.optional(),
 });
 
@@ -85,6 +87,7 @@ export const selectMenuRolePredicate = selectMenuBasePredicate.extend({
 	default_values: z
 		.object({ id: z.string(), type: z.literal(SelectMenuDefaultValueType.Role) })
 		.array()
+		.max(25)
 		.optional(),
 });
 
@@ -106,6 +109,7 @@ export const selectMenuUserPredicate = selectMenuBasePredicate.extend({
 	default_values: z
 		.object({ id: z.string(), type: z.literal(SelectMenuDefaultValueType.User) })
 		.array()
+		.max(25)
 		.optional(),
 });
 
