@@ -37,7 +37,7 @@ export type MessageActionRowComponentBuilder =
 export type ModalActionRowComponentBuilder = TextInputBuilder;
 
 /**
- * Any builder.
+ * Any action row component builder.
  */
 export type AnyActionRowComponentBuilder = MessageActionRowComponentBuilder | ModalActionRowComponentBuilder;
 
