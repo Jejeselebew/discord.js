@@ -99,10 +99,31 @@ export const selectMenuStringOptionPredicate = z.object({
 	default: z.boolean().optional(),
 });
 
-export const selectMenuStringPredicate = selectMenuBasePredicate.extend({
-	type: z.literal(ComponentType.StringSelect),
-	options: selectMenuStringOptionPredicate.array().max(25).optional(),
-});
+export const selectMenuStringPredicate = selectMenuBasePredicate
+	.extend({
+		type: z.literal(ComponentType.StringSelect),
+		options: selectMenuStringOptionPredicate.array().min(1).max(25),
+	})
+	.superRefine((menu, ctx) => {
+		const addIssue = (name: string, minimum: number) =>
+			ctx.addIssue({
+				code: 'too_small',
+				message: `The number of options must be greater than or equal to ${name}`,
+				inclusive: true,
+				minimum,
+				type: 'number',
+				path: ['options'],
+			});
+
+		if (menu.max_values !== undefined && menu.options.length < menu.max_values) {
+			console.log(menu);
+			addIssue('max_values', menu.max_values);
+		}
+
+		if (menu.min_values !== undefined && menu.options.length < menu.min_values) {
+			addIssue('min_values', menu.min_values);
+		}
+	});
 
 export const selectMenuUserPredicate = selectMenuBasePredicate.extend({
 	type: z.literal(ComponentType.UserSelect),

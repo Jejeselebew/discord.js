@@ -19,8 +19,8 @@ const selectMenuOptionData: APISelectMenuOption = {
 const selectMenuDataWithoutOptions = {
 	type: ComponentType.StringSelect,
 	custom_id: 'test',
-	max_values: 10,
-	min_values: 3,
+	max_values: 1,
+	min_values: 1,
 	disabled: true,
 	placeholder: 'test',
 } as const;

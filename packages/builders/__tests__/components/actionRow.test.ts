@@ -41,8 +41,8 @@ const rowWithSelectMenuData: APIActionRowComponent<APIMessageActionRowComponent>
 					value: 'two',
 				},
 			],
-			max_values: 10,
-			min_values: 12,
+			max_values: 2,
+			min_values: 2,
 		},
 	],
 };
@@ -108,8 +108,8 @@ describe('Action Row Components', () => {
 								value: 'two',
 							},
 						],
-						max_values: 10,
-						min_values: 12,
+						max_values: 1,
+						min_values: 1,
 					},
 				],
 			};
@@ -123,8 +123,8 @@ describe('Action Row Components', () => {
 			const button = new ButtonBuilder().setLabel('test').setStyle(ButtonStyle.Primary).setCustomId('123');
 			const selectMenu = new StringSelectMenuBuilder()
 				.setCustomId('1234')
-				.setMaxValues(10)
-				.setMinValues(12)
+				.setMaxValues(2)
+				.setMinValues(2)
 				.setOptions(
 					new StringSelectMenuOptionBuilder().setLabel('one').setValue('one'),
 					new StringSelectMenuOptionBuilder().setLabel('two').setValue('two'),
