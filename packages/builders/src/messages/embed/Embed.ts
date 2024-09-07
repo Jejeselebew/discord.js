@@ -295,7 +295,7 @@ export class EmbedBuilder implements JSONEncodable<APIEmbed> {
 	 *
 	 * @param url - The thumbnail URL to use
 	 */
-	public setThumbnail(url: string | null): this {
+	public setThumbnail(url: string): this {
 		this.data.thumbnail = url ? { url } : undefined;
 		return this;
 	}
