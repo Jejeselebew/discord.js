@@ -13,7 +13,7 @@ import { isValidationEnabled } from '../../util/validation.js';
 import { modalPredicate } from './Assertions.js';
 
 export interface ModalBuilderData extends Partial<Omit<APIModalInteractionResponseCallbackData, 'components'>> {
-	components?: ActionRowBuilder[];
+	components: ActionRowBuilder[];
 }
 
 /**
@@ -28,7 +28,7 @@ export class ModalBuilder implements JSONEncodable<APIModalInteractionResponseCa
 	/**
 	 * The components within this modal.
 	 */
-	public get components(): readonly ActionRowBuilder[] | undefined {
+	public get components(): readonly ActionRowBuilder[] {
 		return this.data.components;
 	}
 

@@ -7,7 +7,7 @@ import { BaseSelectMenuBuilder } from './BaseSelectMenu.js';
 import { StringSelectMenuOptionBuilder } from './StringSelectMenuOption.js';
 
 export interface StringSelectMenuData extends Partial<Omit<APIStringSelectComponent, 'options'>> {
-	options?: StringSelectMenuOptionBuilder[];
+	options: StringSelectMenuOptionBuilder[];
 }
 
 /**
@@ -19,7 +19,7 @@ export class StringSelectMenuBuilder extends BaseSelectMenuBuilder<APIStringSele
 	/**
 	 * The options for this select menu.
 	 */
-	public get options(): readonly StringSelectMenuOptionBuilder[] | undefined {
+	public get options(): readonly StringSelectMenuOptionBuilder[] {
 		return this.data.options;
 	}
 
