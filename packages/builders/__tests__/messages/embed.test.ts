@@ -5,7 +5,7 @@ const alpha = 'abcdefghijklmnopqrstuvwxyz';
 
 const base = {
 	author: undefined,
-	fields: undefined,
+	fields: [],
 	footer: undefined,
 };
 
@@ -203,7 +203,7 @@ describe('Embed', () => {
 
 		test('GIVEN an embed with a pre-defined thumbnail THEN unset thumbnail THEN return valid toJSON data', () => {
 			const embed = new EmbedBuilder({ thumbnail: { url: 'https://discord.js.org/static/logo.svg' } });
-			embed.setThumbnail(null);
+			embed.clearThumbnail();
 
 			expect(embed.toJSON()).toStrictEqual({ ...base, thumbnail: undefined });
 		});
