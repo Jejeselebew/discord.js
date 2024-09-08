@@ -79,7 +79,7 @@ export class ActionRowBuilder extends ComponentBuilder<APIActionRowComponent<API
 	}
 
 	/**
-	 * Adds a button to this action row.
+	 * Adds button components to this action row.
 	 *
 	 * @param input - A function that returns an option builder or an already built builder
 	 */
