@@ -13,7 +13,7 @@ import { EmbedFooterBuilder } from './EmbedFooter.js';
  */
 export interface EmbedBuilderData extends Omit<APIEmbed, 'author' | 'fields' | 'footer'> {
 	author?: EmbedAuthorBuilder;
-	fields?: EmbedFieldBuilder[];
+	fields: EmbedFieldBuilder[];
 	footer?: EmbedFooterBuilder;
 }
 
@@ -29,7 +29,7 @@ export class EmbedBuilder implements JSONEncodable<APIEmbed> {
 	/**
 	 * Gets the fields of this embed.
 	 */
-	public get fields(): readonly EmbedFieldBuilder[] | undefined {
+	public get fields(): readonly EmbedFieldBuilder[] {
 		return this.data.fields;
 	}
 
@@ -42,7 +42,7 @@ export class EmbedBuilder implements JSONEncodable<APIEmbed> {
 		this.data = {
 			...structuredClone(data),
 			author: data.author ? new EmbedAuthorBuilder(data.author) : undefined,
-			fields: data.fields?.map((field) => new EmbedFieldBuilder(field)),
+			fields: data.fields?.map((field) => new EmbedFieldBuilder(field)) ?? [],
 			footer: data.footer ? new EmbedFooterBuilder(data.footer) : undefined,
 		};
 	}

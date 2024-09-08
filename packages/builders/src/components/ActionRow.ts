@@ -17,7 +17,7 @@ import { TextInputBuilder } from './textInput/TextInput.js';
 
 export interface ActionRowBuilderData
 	extends Partial<Omit<APIActionRowComponent<APIActionRowComponentTypes>, 'components'>> {
-	components?: AnyActionRowComponentBuilder[];
+	components: AnyActionRowComponentBuilder[];
 }
 
 /**
@@ -31,7 +31,7 @@ export class ActionRowBuilder extends ComponentBuilder<APIActionRowComponent<API
 	/**
 	 * The components within this action row.
 	 */
-	public get components(): readonly AnyActionRowComponentBuilder[] | undefined {
+	public get components(): readonly AnyActionRowComponentBuilder[] {
 		return this.data.components;
 	}
 
@@ -74,7 +74,7 @@ export class ActionRowBuilder extends ComponentBuilder<APIActionRowComponent<API
 		this.data = {
 			...structuredClone(data),
 			type: ComponentType.ActionRow,
-			components: components?.map((component) => createComponentBuilder(component)),
+			components: components?.map((component) => createComponentBuilder(component)) ?? [],
 		};
 	}
 
