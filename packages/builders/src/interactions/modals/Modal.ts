@@ -70,13 +70,27 @@ export class ModalBuilder implements JSONEncodable<APIModalInteractionResponseCa
 	 * @param components - The components to add
 	 */
 	public addActionRows(
-		...components: RestOrArray<ActionRowBuilder | APIActionRowComponent<APIModalActionRowComponent>>
+		...components: RestOrArray<
+			| ActionRowBuilder
+			| APIActionRowComponent<APIModalActionRowComponent>
+			| ((builder: ActionRowBuilder) => ActionRowBuilder)
+		>
 	) {
-		this.data.components.push(
-			...normalizeArray(components).map((component) =>
-				component instanceof ActionRowBuilder ? component : new ActionRowBuilder(component),
-			),
-		);
+		const normalized = normalizeArray(components);
+		const resolved = normalized.map((component) => {
+			if (component instanceof ActionRowBuilder) {
+				return component;
+			}
+
+			if (typeof component === 'function') {
+				return component(new ActionRowBuilder());
+			}
+
+			return new ActionRowBuilder(component);
+		});
+
+		this.data.components.push(...resolved);
+
 		return this;
 	}
 

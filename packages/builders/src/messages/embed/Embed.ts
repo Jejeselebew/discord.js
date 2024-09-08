@@ -87,9 +87,7 @@ export class EmbedBuilder implements JSONEncodable<APIEmbed> {
 			return new EmbedFieldBuilder(field);
 		});
 
-		this.data.fields ??= [];
 		this.data.fields.push(...resolved);
-
 		return this;
 	}
 
@@ -139,7 +137,6 @@ export class EmbedBuilder implements JSONEncodable<APIEmbed> {
 			return new EmbedFieldBuilder(field);
 		});
 
-		this.data.fields ??= [];
 		this.data.fields.splice(index, deleteCount, ...resolved);
 
 		return this;
