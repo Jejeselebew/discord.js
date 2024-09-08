@@ -10,7 +10,10 @@ export const emojiPredicate = z
 		name: z.string().optional(),
 		animated: z.boolean().optional(),
 	})
-	.strict();
+	.strict()
+	.refine((data) => data.id !== undefined || data.name !== undefined, {
+		message: "Either 'id' or 'name' must be provided",
+	});
 
 const buttonPredicateBase = z.object({
 	type: z.literal(ComponentType.Button),
