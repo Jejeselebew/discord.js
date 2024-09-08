@@ -116,7 +116,6 @@ export const selectMenuStringPredicate = selectMenuBasePredicate
 			});
 
 		if (menu.max_values !== undefined && menu.options.length < menu.max_values) {
-			console.log(menu);
 			addIssue('max_values', menu.max_values);
 		}
 

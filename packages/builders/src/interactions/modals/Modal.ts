@@ -72,7 +72,6 @@ export class ModalBuilder implements JSONEncodable<APIModalInteractionResponseCa
 	public addActionRows(
 		...components: RestOrArray<ActionRowBuilder | APIActionRowComponent<APIModalActionRowComponent>>
 	) {
-		this.data.components ??= [];
 		this.data.components.push(
 			...normalizeArray(components).map((component) =>
 				component instanceof ActionRowBuilder ? component : new ActionRowBuilder(component),
@@ -87,7 +86,6 @@ export class ModalBuilder implements JSONEncodable<APIModalInteractionResponseCa
 	 * @param components - The components to set
 	 */
 	public setActionRows(...components: RestOrArray<ActionRowBuilder>) {
-		this.data.components ??= [];
 		this.data.components.splice(0, this.data.components.length, ...normalizeArray(components));
 		return this;
 	}
@@ -104,7 +102,7 @@ export class ModalBuilder implements JSONEncodable<APIModalInteractionResponseCa
 
 		const data = {
 			...structuredClone(rest),
-			components: components?.map((component) => component.toJSON(validationOverride)),
+			components: components.map((component) => component.toJSON(validationOverride)),
 		};
 
 		if (validationOverride ?? isValidationEnabled()) {

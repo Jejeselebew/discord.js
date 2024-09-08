@@ -164,7 +164,7 @@ export class ActionRowBuilder extends ComponentBuilder<APIActionRowComponent<API
 
 		const data = {
 			...structuredClone(rest),
-			components: this.data.components?.map((component) => component.toJSON(validationOverride)),
+			components: this.data.components.map((component) => component.toJSON(validationOverride)),
 		};
 
 		if (validationOverride ?? isValidationEnabled()) {
@@ -181,8 +181,6 @@ export class ActionRowBuilder extends ComponentBuilder<APIActionRowComponent<API
 		input: Component | ((builder: Component) => Component),
 		Instance: new () => Component,
 	) {
-		this.data.components ??= [];
-
 		const result = typeof input === 'function' ? input(new Instance()) : input;
 		this.data.components.push(result);
 
