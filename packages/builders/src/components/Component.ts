@@ -9,7 +9,7 @@ export type AnyAPIActionRowComponent = APIActionRowComponent<APIActionRowCompone
 /**
  * The base component builder that contains common symbols for all sorts of components.
  *
- * @typeParam DataType - The type of internal API data that is stored within the component
+ * @typeParam Component - The type of API data that is stored within the builder
  */
 export abstract class ComponentBuilder<Component extends AnyAPIActionRowComponent> implements JSONEncodable<Component> {
 	/**
