@@ -101,7 +101,7 @@ export const stringOptionPredicate = basicOptionPredicate
 	})
 	.and(autocompleteOrChoicesMixinOptionPredicate);
 
-export const baseSlashCommandPredicate = sharedNameAndDescriptionPredicate.extend({
+export const baseChatInputCommandPredicate = sharedNameAndDescriptionPredicate.extend({
 	contexts: z.array(z.nativeEnum(InteractionContextType)).optional(),
 	default_member_permissions: memberPermissionsPredicate.optional(),
 	integration_types: z.array(z.nativeEnum(ApplicationIntegrationType)).optional(),
@@ -109,17 +109,17 @@ export const baseSlashCommandPredicate = sharedNameAndDescriptionPredicate.exten
 });
 
 // Because you can only add options via builders, there's no need to validate whole objects here otherwise
-export const slashCommandOptionsPredicate = z.union([
+export const chatInputCommandOptionsPredicate = z.union([
 	z.object({ type: basicOptionTypesPredicate }).array(),
 	z.object({ type: z.literal(ApplicationCommandOptionType.Subcommand) }).array(),
 	z.object({ type: z.literal(ApplicationCommandOptionType.SubcommandGroup) }).array(),
 ]);
 
-export const slashCommandPredicate = baseSlashCommandPredicate.extend({
-	options: slashCommandOptionsPredicate.optional(),
+export const chatInputCommandPredicate = baseChatInputCommandPredicate.extend({
+	options: chatInputCommandOptionsPredicate.optional(),
 });
 
-export const slashCommandSubcommandGroupPredicate = sharedNameAndDescriptionPredicate.extend({
+export const chatInputCommandSubcommandGroupPredicate = sharedNameAndDescriptionPredicate.extend({
 	type: z.literal(ApplicationCommandOptionType.SubcommandGroup),
 	options: z
 		.array(z.object({ type: z.literal(ApplicationCommandOptionType.Subcommand) }))
@@ -127,7 +127,7 @@ export const slashCommandSubcommandGroupPredicate = sharedNameAndDescriptionPred
 		.max(25),
 });
 
-export const slashCommandSubcommandPredicate = sharedNameAndDescriptionPredicate.extend({
+export const chatInputCommandSubcommandPredicate = sharedNameAndDescriptionPredicate.extend({
 	type: z.literal(ApplicationCommandOptionType.Subcommand),
 	options: z.array(z.object({ type: basicOptionTypesPredicate })).max(25),
 });

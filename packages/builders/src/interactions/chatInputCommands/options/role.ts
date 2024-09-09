@@ -2,10 +2,10 @@ import { ApplicationCommandOptionType } from 'discord-api-types/v10';
 import { ApplicationCommandOptionBase } from '../mixins/ApplicationCommandOptionBase.js';
 
 /**
- * A slash command user option.
+ * A chat input command role option.
  */
-export class SlashCommandUserOption extends ApplicationCommandOptionBase {
+export class ChatInputCommandRoleOption extends ApplicationCommandOptionBase {
 	public constructor() {
-		super(ApplicationCommandOptionType.User);
+		super(ApplicationCommandOptionType.Role);
 	}
 }

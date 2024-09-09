@@ -5,9 +5,9 @@ import { ApplicationCommandOptionBase } from '../mixins/ApplicationCommandOption
 import { ApplicationCommandOptionChannelTypesMixin } from '../mixins/ApplicationCommandOptionChannelTypesMixin.js';
 
 /**
- * A slash command channel option.
+ * A chat input command channel option.
  */
-export class SlashCommandChannelOption extends Mixin(
+export class ChatInputCommandChannelOption extends Mixin(
 	ApplicationCommandOptionBase,
 	ApplicationCommandOptionChannelTypesMixin,
 ) {

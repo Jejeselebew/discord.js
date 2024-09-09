@@ -7,87 +7,88 @@ import {
 } from 'discord-api-types/v10';
 import { describe, test, expect } from 'vitest';
 import {
-	SlashCommandAssertions,
-	SlashCommandBooleanOption,
-	SlashCommandBuilder,
-	SlashCommandChannelOption,
-	SlashCommandIntegerOption,
-	SlashCommandMentionableOption,
-	SlashCommandNumberOption,
-	SlashCommandRoleOption,
-	SlashCommandAttachmentOption,
-	SlashCommandStringOption,
-	SlashCommandSubcommandBuilder,
-	SlashCommandSubcommandGroupBuilder,
-	SlashCommandUserOption,
+	ChatInputCommandAssertions,
+	ChatInputCommandBooleanOption,
+	ChatInputCommandBuilder,
+	ChatInputCommandChannelOption,
+	ChatInputCommandIntegerOption,
+	ChatInputCommandMentionableOption,
+	ChatInputCommandNumberOption,
+	ChatInputCommandRoleOption,
+	ChatInputCommandAttachmentOption,
+	ChatInputCommandStringOption,
+	ChatInputCommandSubcommandBuilder,
+	ChatInputCommandSubcommandGroupBuilder,
+	ChatInputCommandUserOption,
 } from '../../../src/index.js';
 
-const getBuilder = () => new SlashCommandBuilder();
+const getBuilder = () => new ChatInputCommandBuilder();
 const getNamedBuilder = () => getBuilder().setName('example').setDescription('Example command');
-const getStringOption = () => new SlashCommandStringOption().setName('owo').setDescription('Testing 123');
-const getIntegerOption = () => new SlashCommandIntegerOption().setName('owo').setDescription('Testing 123');
-const getNumberOption = () => new SlashCommandNumberOption().setName('owo').setDescription('Testing 123');
-const getBooleanOption = () => new SlashCommandBooleanOption().setName('owo').setDescription('Testing 123');
-const getUserOption = () => new SlashCommandUserOption().setName('owo').setDescription('Testing 123');
-const getChannelOption = () => new SlashCommandChannelOption().setName('owo').setDescription('Testing 123');
-const getRoleOption = () => new SlashCommandRoleOption().setName('owo').setDescription('Testing 123');
-const getAttachmentOption = () => new SlashCommandAttachmentOption().setName('owo').setDescription('Testing 123');
-const getMentionableOption = () => new SlashCommandMentionableOption().setName('owo').setDescription('Testing 123');
-const getSubcommandGroup = () => new SlashCommandSubcommandGroupBuilder().setName('owo').setDescription('Testing 123');
-const getSubcommand = () => new SlashCommandSubcommandBuilder().setName('owo').setDescription('Testing 123');
+const getStringOption = () => new ChatInputCommandStringOption().setName('owo').setDescription('Testing 123');
+const getIntegerOption = () => new ChatInputCommandIntegerOption().setName('owo').setDescription('Testing 123');
+const getNumberOption = () => new ChatInputCommandNumberOption().setName('owo').setDescription('Testing 123');
+const getBooleanOption = () => new ChatInputCommandBooleanOption().setName('owo').setDescription('Testing 123');
+const getUserOption = () => new ChatInputCommandUserOption().setName('owo').setDescription('Testing 123');
+const getChannelOption = () => new ChatInputCommandChannelOption().setName('owo').setDescription('Testing 123');
+const getRoleOption = () => new ChatInputCommandRoleOption().setName('owo').setDescription('Testing 123');
+const getAttachmentOption = () => new ChatInputCommandAttachmentOption().setName('owo').setDescription('Testing 123');
+const getMentionableOption = () => new ChatInputCommandMentionableOption().setName('owo').setDescription('Testing 123');
+const getSubcommandGroup = () =>
+	new ChatInputCommandSubcommandGroupBuilder().setName('owo').setDescription('Testing 123');
+const getSubcommand = () => new ChatInputCommandSubcommandBuilder().setName('owo').setDescription('Testing 123');
 
 class Collection {
 	public readonly [Symbol.toStringTag] = 'Map';
 }
 
-describe('Slash Commands', () => {
+describe('ChatInput Commands', () => {
 	describe('Assertions tests', () => {
 		test('GIVEN valid name THEN does not throw error', () => {
-			expect(() => SlashCommandAssertions.namePredicate.parse('ping')).not.toThrowError();
-			expect(() => SlashCommandAssertions.namePredicate.parse('hello-world_command')).not.toThrowError();
-			expect(() => SlashCommandAssertions.namePredicate.parse('aˇ㐆1٢〣²अก')).not.toThrowError();
+			expect(() => ChatInputCommandAssertions.namePredicate.parse('ping')).not.toThrowError();
+			expect(() => ChatInputCommandAssertions.namePredicate.parse('hello-world_command')).not.toThrowError();
+			expect(() => ChatInputCommandAssertions.namePredicate.parse('aˇ㐆1٢〣²अก')).not.toThrowError();
 		});
 
 		test('GIVEN invalid name THEN throw error', () => {
-			expect(() => SlashCommandAssertions.namePredicate.parse(null)).toThrowError();
+			expect(() => ChatInputCommandAssertions.namePredicate.parse(null)).toThrowError();
 
 			// Too short of a name
-			expect(() => SlashCommandAssertions.namePredicate.parse('')).toThrowError();
+			expect(() => ChatInputCommandAssertions.namePredicate.parse('')).toThrowError();
 
 			// Invalid characters used
-			expect(() => SlashCommandAssertions.namePredicate.parse('ABC')).toThrowError();
-			expect(() => SlashCommandAssertions.namePredicate.parse('ABC123$%^&')).toThrowError();
-			expect(() => SlashCommandAssertions.namePredicate.parse('help ping')).toThrowError();
-			expect(() => SlashCommandAssertions.namePredicate.parse('🦦')).toThrowError();
+			expect(() => ChatInputCommandAssertions.namePredicate.parse('ABC')).toThrowError();
+			expect(() => ChatInputCommandAssertions.namePredicate.parse('ABC123$%^&')).toThrowError();
+			expect(() => ChatInputCommandAssertions.namePredicate.parse('help ping')).toThrowError();
+			expect(() => ChatInputCommandAssertions.namePredicate.parse('🦦')).toThrowError();
 
 			// Too long of a name
 			expect(() =>
-				SlashCommandAssertions.numberOptionPredicate.parse('qwertyuiopasdfghjklzxcvbnmqwertyuiopasdfghjklzxcvbnm'),
+				ChatInputCommandAssertions.numberOptionPredicate.parse('qwertyuiopasdfghjklzxcvbnmqwertyuiopasdfghjklzxcvbnm'),
 			).toThrowError();
 		});
 
 		test('GIVEN valid description THEN does not throw error', () => {
 			expect(() =>
-				SlashCommandAssertions.descriptionPredicate.parse('This is an OwO moment fur sure!~'),
+				ChatInputCommandAssertions.descriptionPredicate.parse('This is an OwO moment fur sure!~'),
 			).not.toThrowError();
 		});
 
 		test('GIVEN invalid description THEN throw error', () => {
-			expect(() => SlashCommandAssertions.descriptionPredicate.parse(null)).toThrowError();
+			expect(() => ChatInputCommandAssertions.descriptionPredicate.parse(null)).toThrowError();
 
 			// Too short of a description
-			expect(() => SlashCommandAssertions.descriptionPredicate.parse('')).toThrowError();
+			expect(() => ChatInputCommandAssertions.descriptionPredicate.parse('')).toThrowError();
 
 			// Too long of a description
 			expect(() =>
-				SlashCommandAssertions.descriptionPredicate.parse(
+				ChatInputCommandAssertions.descriptionPredicate.parse(
 					'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Magnam autem libero expedita vitae accusamus nostrum ipsam tempore repudiandae deserunt ipsum facilis, velit fugiat facere accusantium, explicabo corporis aliquam non quos.',
 				),
 			).toThrowError();
 		});
 	});
 
-	describe('SlashCommandBuilder', () => {
+	describe('ChatInputCommandBuilder', () => {
 		describe('Builder with no options', () => {
 			test('GIVEN empty builder THEN throw error when calling toJSON', () => {
 				expect(() => getBuilder().toJSON()).toThrowError();
@@ -291,7 +292,7 @@ describe('Slash Commands', () => {
 				expect(() =>
 					getNamedBuilder()
 						// @ts-expect-error: Checking if not providing anything, or an invalid return type causes an error
-						.addBooleanOption(() => SlashCommandStringOption)
+						.addBooleanOption(() => ChatInputCommandStringOption)
 						.toJSON(),
 				).toThrowError();
 				expect(() =>
@@ -348,7 +349,7 @@ describe('Slash Commands', () => {
 				).not.toThrowError();
 			});
 
-			test('GIVEN builder with subcommand THEN has regular slash command fields', () => {
+			test('GIVEN builder with subcommand THEN has regular ChatInput command fields', () => {
 				expect(() =>
 					getBuilder()
 						.setName('name')
@@ -419,7 +420,7 @@ describe('Slash Commands', () => {
 			});
 		});
 
-		describe('Slash command localizations', () => {
+		describe('ChatInput command localizations', () => {
 			const expectedSingleLocale = { 'en-US': 'foobar' };
 			const expectedMultipleLocales = {
 				...expectedSingleLocale,

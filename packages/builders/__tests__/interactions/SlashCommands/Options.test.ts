@@ -13,32 +13,32 @@ import {
 } from 'discord-api-types/v10';
 import { describe, test, expect } from 'vitest';
 import {
-	SlashCommandAttachmentOption,
-	SlashCommandBooleanOption,
-	SlashCommandChannelOption,
-	SlashCommandIntegerOption,
-	SlashCommandMentionableOption,
-	SlashCommandNumberOption,
-	SlashCommandRoleOption,
-	SlashCommandStringOption,
-	SlashCommandUserOption,
+	ChatInputCommandAttachmentOption,
+	ChatInputCommandBooleanOption,
+	ChatInputCommandChannelOption,
+	ChatInputCommandIntegerOption,
+	ChatInputCommandMentionableOption,
+	ChatInputCommandNumberOption,
+	ChatInputCommandRoleOption,
+	ChatInputCommandStringOption,
+	ChatInputCommandUserOption,
 } from '../../../src/index.js';
 
 const getBooleanOption = () =>
-	new SlashCommandBooleanOption().setName('owo').setDescription('Testing 123').setRequired(true);
+	new ChatInputCommandBooleanOption().setName('owo').setDescription('Testing 123').setRequired(true);
 
 const getChannelOption = () =>
-	new SlashCommandChannelOption()
+	new ChatInputCommandChannelOption()
 		.setName('owo')
 		.setDescription('Testing 123')
 		.setRequired(true)
 		.addChannelTypes(ChannelType.GuildText);
 
 const getStringOption = () =>
-	new SlashCommandStringOption().setName('owo').setDescription('Testing 123').setRequired(true);
+	new ChatInputCommandStringOption().setName('owo').setDescription('Testing 123').setRequired(true);
 
 const getIntegerOption = () =>
-	new SlashCommandIntegerOption()
+	new ChatInputCommandIntegerOption()
 		.setName('owo')
 		.setDescription('Testing 123')
 		.setRequired(true)
@@ -46,22 +46,24 @@ const getIntegerOption = () =>
 		.setMaxValue(10);
 
 const getNumberOption = () =>
-	new SlashCommandNumberOption()
+	new ChatInputCommandNumberOption()
 		.setName('owo')
 		.setDescription('Testing 123')
 		.setRequired(true)
 		.setMinValue(-1.23)
 		.setMaxValue(10);
 
-const getUserOption = () => new SlashCommandUserOption().setName('owo').setDescription('Testing 123').setRequired(true);
+const getUserOption = () =>
+	new ChatInputCommandUserOption().setName('owo').setDescription('Testing 123').setRequired(true);
 
-const getRoleOption = () => new SlashCommandRoleOption().setName('owo').setDescription('Testing 123').setRequired(true);
+const getRoleOption = () =>
+	new ChatInputCommandRoleOption().setName('owo').setDescription('Testing 123').setRequired(true);
 
 const getMentionableOption = () =>
-	new SlashCommandMentionableOption().setName('owo').setDescription('Testing 123').setRequired(true);
+	new ChatInputCommandMentionableOption().setName('owo').setDescription('Testing 123').setRequired(true);
 
 const getAttachmentOption = () =>
-	new SlashCommandAttachmentOption().setName('attachment').setDescription('attachment').setRequired(true);
+	new ChatInputCommandAttachmentOption().setName('attachment').setDescription('attachment').setRequired(true);
 
 describe('Application Command toJSON() results', () => {
 	test('GIVEN a boolean option THEN calling toJSON should return a valid JSON', () => {

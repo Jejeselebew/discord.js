@@ -2,17 +2,22 @@ import type { JSONEncodable } from '@discordjs/util';
 import { ApplicationCommandType, type RESTPostAPIChatInputApplicationCommandsJSONBody } from 'discord-api-types/v10';
 import { Mixin } from 'ts-mixer';
 import { isValidationEnabled } from '../../util/validation.js';
-import { slashCommandPredicate } from './Assertions.js';
+import { chatInputCommandPredicate } from './Assertions.js';
+import { SharedChatInputCommand } from './mixins/SharedChatInputCommand.js';
+import { SharedChatInputCommandOptions } from './mixins/SharedChatInputCommandOptions.js';
 import { SharedNameAndDescription } from './mixins/SharedNameAndDescription.js';
-import { SharedSlashCommand } from './mixins/SharedSlashCommand.js';
-import { SharedSlashCommandOptions } from './mixins/SharedSlashCommandOptions.js';
-import { SharedSlashCommandSubcommands } from './mixins/SharedSubcommands.js';
+import { SharedChatInputCommandSubcommands } from './mixins/SharedSubcommands.js';
 
 /**
- * A builder that creates API-compatible JSON data for slash commands.
+ * A builder that creates API-compatible JSON data for chat input commands.
  */
-export class SlashCommandBuilder
-	extends Mixin(SharedSlashCommandOptions, SharedNameAndDescription, SharedSlashCommandSubcommands, SharedSlashCommand)
+export class ChatInputCommandBuilder
+	extends Mixin(
+		SharedChatInputCommandOptions,
+		SharedNameAndDescription,
+		SharedChatInputCommandSubcommands,
+		SharedChatInputCommand,
+	)
 	implements JSONEncodable<RESTPostAPIChatInputApplicationCommandsJSONBody>
 {
 	/**
@@ -32,7 +37,7 @@ export class SlashCommandBuilder
 		};
 
 		if (validationOverride ?? isValidationEnabled()) {
-			slashCommandPredicate.parse(data);
+			chatInputCommandPredicate.parse(data);
 		}
 
 		return data;

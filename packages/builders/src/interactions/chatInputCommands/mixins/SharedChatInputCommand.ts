@@ -7,7 +7,7 @@ import type {
 import type { RestOrArray } from '../../../util/normalizeArray.js';
 import { normalizeArray } from '../../../util/normalizeArray.js';
 
-export interface SharedSlashCommandData
+export interface SharedChatInputCommandData
 	extends Partial<
 		Pick<
 			RESTPostAPIChatInputApplicationCommandsJSONBody,
@@ -16,10 +16,10 @@ export interface SharedSlashCommandData
 	> {}
 
 /**
- * This mixin holds symbols that can be shared in slashcommands independent of options or subcommands.
+ * This mixin holds symbols that can be shared in chat input commands independent of options or subcommands.
  */
-export class SharedSlashCommand {
-	protected declare readonly data: SharedSlashCommandData;
+export class SharedChatInputCommand {
+	protected declare readonly data: SharedChatInputCommandData;
 
 	/**
 	 * Sets the contexts of this command.

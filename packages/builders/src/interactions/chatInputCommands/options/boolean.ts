@@ -2,10 +2,10 @@ import { ApplicationCommandOptionType } from 'discord-api-types/v10';
 import { ApplicationCommandOptionBase } from '../mixins/ApplicationCommandOptionBase.js';
 
 /**
- * A slash command attachment option.
+ * A chat input command boolean option.
  */
-export class SlashCommandAttachmentOption extends ApplicationCommandOptionBase {
+export class ChatInputCommandBooleanOption extends ApplicationCommandOptionBase {
 	public constructor() {
-		super(ApplicationCommandOptionType.Attachment);
+		super(ApplicationCommandOptionType.Boolean);
 	}
 }

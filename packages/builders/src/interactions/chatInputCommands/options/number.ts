@@ -7,9 +7,9 @@ import { ApplicationCommandOptionWithAutocompleteMixin } from '../mixins/Applica
 import { ApplicationCommandOptionWithChoicesMixin } from '../mixins/ApplicationCommandOptionWithChoicesMixin.js';
 
 /**
- * A slash command number option.
+ * A chat input command number option.
  */
-export class SlashCommandNumberOption extends Mixin(
+export class ChatInputCommandNumberOption extends Mixin(
 	ApplicationCommandOptionBase,
 	ApplicationCommandNumericOptionMinMaxValueMixin,
 	ApplicationCommandOptionWithAutocompleteMixin,

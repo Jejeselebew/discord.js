@@ -6,13 +6,13 @@ import type {
 import { ApplicationCommandOptionType } from 'discord-api-types/v10';
 import { Mixin } from 'ts-mixer';
 import { isValidationEnabled } from '../../util/validation.js';
-import { slashCommandSubcommandGroupPredicate, slashCommandSubcommandPredicate } from './Assertions.js';
+import { chatInputCommandSubcommandGroupPredicate, chatInputCommandSubcommandPredicate } from './Assertions.js';
+import { SharedChatInputCommandOptions } from './mixins/SharedChatInputCommandOptions.js';
 import type { SharedNameAndDescriptionData } from './mixins/SharedNameAndDescription.js';
 import { SharedNameAndDescription } from './mixins/SharedNameAndDescription.js';
-import { SharedSlashCommandOptions } from './mixins/SharedSlashCommandOptions.js';
 
-export interface SlashCommandSubcommandGroupData {
-	options?: SlashCommandSubcommandBuilder[];
+export interface ChatInputCommandSubcommandGroupData {
+	options?: ChatInputCommandSubcommandBuilder[];
 }
 
 /**
@@ -20,11 +20,11 @@ export interface SlashCommandSubcommandGroupData {
  *
  * @see {@link https://discord.com/developers/docs/interactions/application-commands#subcommands-and-subcommand-groups}
  */
-export class SlashCommandSubcommandGroupBuilder
+export class ChatInputCommandSubcommandGroupBuilder
 	extends SharedNameAndDescription
 	implements JSONEncodable<APIApplicationCommandSubcommandGroupOption>
 {
-	protected declare readonly data: SharedNameAndDescriptionData & SlashCommandSubcommandGroupData;
+	protected declare readonly data: ChatInputCommandSubcommandGroupData & SharedNameAndDescriptionData;
 
 	/**
 	 * Adds a new subcommand to this group.
@@ -33,11 +33,11 @@ export class SlashCommandSubcommandGroupBuilder
 	 */
 	public addSubcommand(
 		input:
-			| SlashCommandSubcommandBuilder
-			| ((subcommandGroup: SlashCommandSubcommandBuilder) => SlashCommandSubcommandBuilder),
+			| ChatInputCommandSubcommandBuilder
+			| ((subcommandGroup: ChatInputCommandSubcommandBuilder) => ChatInputCommandSubcommandBuilder),
 	) {
 		// eslint-disable-next-line @typescript-eslint/no-use-before-define
-		const result = typeof input === 'function' ? input(new SlashCommandSubcommandBuilder()) : input;
+		const result = typeof input === 'function' ? input(new ChatInputCommandSubcommandBuilder()) : input;
 
 		this.data.options ??= [];
 		this.data.options.push(result);
@@ -62,7 +62,7 @@ export class SlashCommandSubcommandGroupBuilder
 		};
 
 		if (validationOverride ?? isValidationEnabled()) {
-			slashCommandSubcommandGroupPredicate.parse(data);
+			chatInputCommandSubcommandGroupPredicate.parse(data);
 		}
 
 		return data;
@@ -70,12 +70,12 @@ export class SlashCommandSubcommandGroupBuilder
 }
 
 /**
- * A builder that creates API-compatible JSON data for slash command subcommands.
+ * A builder that creates API-compatible JSON data for chat input command subcommands.
  *
  * @see {@link https://discord.com/developers/docs/interactions/application-commands#subcommands-and-subcommand-groups}
  */
-export class SlashCommandSubcommandBuilder
-	extends Mixin(SharedNameAndDescription, SharedSlashCommandOptions)
+export class ChatInputCommandSubcommandBuilder
+	extends Mixin(SharedNameAndDescription, SharedChatInputCommandOptions)
 	implements JSONEncodable<APIApplicationCommandSubcommandOption>
 {
 	/**
@@ -95,7 +95,7 @@ export class SlashCommandSubcommandBuilder
 		};
 
 		if (validationOverride ?? isValidationEnabled()) {
-			slashCommandSubcommandPredicate.parse(data);
+			chatInputCommandSubcommandPredicate.parse(data);
 		}
 
 		return data;

@@ -6,7 +6,7 @@ export interface SharedNameAndDescriptionData
 	> {}
 
 /**
- * This mixin holds name and description symbols for slash commands.
+ * This mixin holds name and description symbols for chat input commands.
  */
 export class SharedNameAndDescription {
 	protected readonly data: SharedNameAndDescriptionData = {};

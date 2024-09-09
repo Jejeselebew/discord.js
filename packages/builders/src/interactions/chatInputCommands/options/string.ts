@@ -9,9 +9,9 @@ import type { ApplicationCommandOptionWithChoicesData } from '../mixins/Applicat
 import { ApplicationCommandOptionWithChoicesMixin } from '../mixins/ApplicationCommandOptionWithChoicesMixin.js';
 
 /**
- * A slash command string option.
+ * A chat input command string option.
  */
-export class SlashCommandStringOption extends Mixin(
+export class ChatInputCommandStringOption extends Mixin(
 	ApplicationCommandOptionBase,
 	ApplicationCommandOptionWithAutocompleteMixin,
 	ApplicationCommandOptionWithChoicesMixin<string>,
