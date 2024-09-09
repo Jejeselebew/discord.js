@@ -231,7 +231,7 @@ describe('Embed', () => {
 
 		test('GIVEN an embed with a pre-defined image THEN unset image THEN return valid toJSON data', () => {
 			const embed = new EmbedBuilder({ image: { url: 'https://discord.js/org/static/logo.svg' } });
-			embed.setImage(null);
+			embed.clearImage();
 
 			expect(embed.toJSON()).toStrictEqual({ ...base, image: undefined });
 		});
