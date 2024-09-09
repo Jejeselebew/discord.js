@@ -28,7 +28,7 @@ export class EmbedAuthorBuilder {
 	}
 
 	/**
-	 * Sets the url for this embed author.
+	 * Sets the URL for this embed author.
 	 *
 	 * @param url - The url to use
 	 */

@@ -41,9 +41,9 @@ export class EmbedBuilder implements JSONEncodable<APIEmbed> {
 	public constructor(data: APIEmbed = {}) {
 		this.data = {
 			...structuredClone(data),
-			author: data.author ? new EmbedAuthorBuilder(data.author) : undefined,
+			author: data.author && new EmbedAuthorBuilder(data.author),
 			fields: data.fields?.map((field) => new EmbedFieldBuilder(field)) ?? [],
-			footer: data.footer ? new EmbedFooterBuilder(data.footer) : undefined,
+			footer: data.footer && new EmbedFooterBuilder(data.footer),
 		};
 	}
 
@@ -155,7 +155,7 @@ export class EmbedBuilder implements JSONEncodable<APIEmbed> {
 	public setFields(
 		...fields: RestOrArray<APIEmbedField | EmbedFieldBuilder | ((builder: EmbedFieldBuilder) => EmbedFieldBuilder)>
 	): this {
-		this.spliceFields(0, this.data.fields?.length ?? 0, ...normalizeArray(fields));
+		this.spliceFields(0, this.data.fields.length, ...normalizeArray(fields));
 		return this;
 	}
 
@@ -274,8 +274,8 @@ export class EmbedBuilder implements JSONEncodable<APIEmbed> {
 	 *
 	 * @param url - The image URL to use
 	 */
-	public setImage(url: string | null): this {
-		this.data.image = url ? { url } : undefined;
+	public setImage(url: string): this {
+		this.data.image = { url };
 		return this;
 	}
 
@@ -293,7 +293,7 @@ export class EmbedBuilder implements JSONEncodable<APIEmbed> {
 	 * @param url - The thumbnail URL to use
 	 */
 	public setThumbnail(url: string): this {
-		this.data.thumbnail = url ? { url } : undefined;
+		this.data.thumbnail = { url };
 		return this;
 	}
 
@@ -367,8 +367,10 @@ export class EmbedBuilder implements JSONEncodable<APIEmbed> {
 	 * @param validationOverride - Force validation to run/not run regardless of your global preference
 	 */
 	public toJSON(validationOverride?: boolean): APIEmbed {
+		const { author, fields, footer, ...rest } = this.data;
+
 		const data = {
-			...structuredClone(this.data),
+			...structuredClone(rest),
 			// Disable validation because the embedPredicate below will validate those as well
 			author: this.data.author?.toJSON(false),
 			fields: this.data.fields?.map((field) => field.toJSON(false)),

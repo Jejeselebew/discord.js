@@ -13,8 +13,7 @@ export const modalPredicate = z.object({
 			components: z
 				.object({ type: z.literal(ComponentType.TextInput) })
 				.array()
-				.min(1)
-				.max(1),
+				.length(1),
 		})
 		.array()
 		.min(1)

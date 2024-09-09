@@ -37,10 +37,10 @@ export class ModalBuilder implements JSONEncodable<APIModalInteractionResponseCa
 	 *
 	 * @param data - The API data to create this modal with
 	 */
-	public constructor({ components, ...data }: Partial<APIModalInteractionResponseCallbackData> = {}) {
+	public constructor({ components = [], ...data }: Partial<APIModalInteractionResponseCallbackData> = {}) {
 		this.data = {
 			...structuredClone(data),
-			components: (components?.map((component) => createComponentBuilder(component)) ?? []) as ActionRowBuilder[],
+			components: components.map((component) => createComponentBuilder(component)),
 		};
 	}
 
@@ -65,7 +65,7 @@ export class ModalBuilder implements JSONEncodable<APIModalInteractionResponseCa
 	}
 
 	/**
-	 * Adds components to this modal.
+	 * Adds action rows to this modal.
 	 *
 	 * @param components - The components to add
 	 */
@@ -95,7 +95,7 @@ export class ModalBuilder implements JSONEncodable<APIModalInteractionResponseCa
 	}
 
 	/**
-	 * Sets components for this modal.
+	 * Sets the action rows for this modal.
 	 *
 	 * @param components - The components to set
 	 */

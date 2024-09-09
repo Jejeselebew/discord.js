@@ -69,12 +69,12 @@ export class ActionRowBuilder extends ComponentBuilder<APIActionRowComponent<API
 	 * 	.addComponents(button2, button3);
 	 * ```
 	 */
-	public constructor({ components, ...data }: Partial<APIActionRowComponent<APIActionRowComponentTypes>> = {}) {
+	public constructor({ components = [], ...data }: Partial<APIActionRowComponent<APIActionRowComponentTypes>> = {}) {
 		super();
 		this.data = {
 			...structuredClone(data),
 			type: ComponentType.ActionRow,
-			components: components?.map((component) => createComponentBuilder(component)) ?? [],
+			components: components.map((component) => createComponentBuilder(component)) ?? [],
 		};
 	}
 
@@ -93,7 +93,7 @@ export class ActionRowBuilder extends ComponentBuilder<APIActionRowComponent<API
 	}
 
 	/**
-	 * Adds a channel select menu to this action row.
+	 * Adds a channel select menu component to this action row.
 	 *
 	 * @param input - A function that returns a component builder or an already built builder
 	 */
@@ -104,7 +104,7 @@ export class ActionRowBuilder extends ComponentBuilder<APIActionRowComponent<API
 	}
 
 	/**
-	 * Adds a mentionable select menu to this action row.
+	 * Adds a mentionable select menu component to this action row.
 	 *
 	 * @param input - A function that returns a component builder or an already built builder
 	 */
@@ -115,7 +115,7 @@ export class ActionRowBuilder extends ComponentBuilder<APIActionRowComponent<API
 	}
 
 	/**
-	 * Adds a role select menu to this action row.
+	 * Adds a role select menu component to this action row.
 	 *
 	 * @param input - A function that returns a component builder or an already built builder
 	 */
@@ -126,7 +126,7 @@ export class ActionRowBuilder extends ComponentBuilder<APIActionRowComponent<API
 	}
 
 	/**
-	 * Adds a string select menu to this action row.
+	 * Adds a string select menu component to this action row.
 	 *
 	 * @param input - A function that returns a component builder or an already built builder
 	 */
@@ -137,7 +137,7 @@ export class ActionRowBuilder extends ComponentBuilder<APIActionRowComponent<API
 	}
 
 	/**
-	 * Adds a user select menu to this action row.
+	 * Adds a user select menu component to this action row.
 	 *
 	 * @param input - A function that returns a component builder or an already built builder
 	 */
@@ -148,7 +148,7 @@ export class ActionRowBuilder extends ComponentBuilder<APIActionRowComponent<API
 	}
 
 	/**
-	 * Adds a text input to this action row.
+	 * Adds a text input component to this action row.
 	 *
 	 * @param input - A function that returns a component builder or an already built builder
 	 */
