@@ -3,6 +3,10 @@ import { EmbedBuilder, embedLength } from '../../src/index.js';
 
 const alpha = 'abcdefghijklmnopqrstuvwxyz';
 
+const dummy = {
+	title: 'ooooo aaaaa uuuuuu aaaa',
+};
+
 const base = {
 	author: undefined,
 	fields: [],
@@ -26,7 +30,7 @@ describe('Embed', () => {
 		test('GIVEN an embed with zero characters THEN returns amount of characters', () => {
 			const embed = new EmbedBuilder();
 
-			expect(embedLength(embed.toJSON())).toEqual(0);
+			expect(embedLength(embed.toJSON(false))).toEqual(0);
 		});
 	});
 
@@ -44,10 +48,10 @@ describe('Embed', () => {
 		});
 
 		test('GIVEN an embed with a pre-defined title THEN unset title THEN return valid toJSON data', () => {
-			const embed = new EmbedBuilder({ title: 'foo' });
+			const embed = new EmbedBuilder({ title: 'foo', description: ':3' });
 			embed.clearTitle();
 
-			expect(embed.toJSON()).toStrictEqual({ ...base, title: undefined });
+			expect(embed.toJSON()).toStrictEqual({ ...base, description: ':3', title: undefined });
 		});
 
 		test('GIVEN an embed with an invalid title THEN throws error', () => {
@@ -73,10 +77,10 @@ describe('Embed', () => {
 		});
 
 		test('GIVEN an embed with a pre-defined description THEN unset description THEN return valid toJSON data', () => {
-			const embed = new EmbedBuilder({ description: 'foo' });
+			const embed = new EmbedBuilder({ description: 'foo', ...dummy });
 			embed.clearDescription();
 
-			expect(embed.toJSON()).toStrictEqual({ ...base, description: undefined });
+			expect(embed.toJSON()).toStrictEqual({ ...base, ...dummy, description: undefined });
 		});
 
 		test('GIVEN an embed with an invalid description THEN throws error', () => {
@@ -89,28 +93,30 @@ describe('Embed', () => {
 
 	describe('Embed URL', () => {
 		test('GIVEN an embed with a pre-defined url THEN returns valid toJSON data', () => {
-			const embed = new EmbedBuilder({ url: 'https://discord.js.org/' });
+			const embed = new EmbedBuilder({ url: 'https://discord.js.org/', ...dummy });
 			expect(embed.toJSON()).toStrictEqual({
 				...base,
+				...dummy,
 				url: 'https://discord.js.org/',
 			});
 		});
 
 		test('GIVEN an embed using Embed#setURL THEN returns valid toJSON data', () => {
-			const embed = new EmbedBuilder();
+			const embed = new EmbedBuilder(dummy);
 			embed.setURL('https://discord.js.org/');
 
 			expect(embed.toJSON()).toStrictEqual({
 				...base,
+				...dummy,
 				url: 'https://discord.js.org/',
 			});
 		});
 
 		test('GIVEN an embed with a pre-defined title THEN unset title THEN return valid toJSON data', () => {
-			const embed = new EmbedBuilder({ url: 'https://discord.js.org' });
+			const embed = new EmbedBuilder({ url: 'https://discord.js.org', ...dummy });
 			embed.clearURL();
 
-			expect(embed.toJSON()).toStrictEqual({ ...base, url: undefined });
+			expect(embed.toJSON()).toStrictEqual({ ...base, ...dummy, url: undefined });
 		});
 
 		test.each(['owo', 'discord://user'])('GIVEN an embed with an invalid URL THEN throws error', (input) => {
@@ -123,19 +129,19 @@ describe('Embed', () => {
 
 	describe('Embed Color', () => {
 		test('GIVEN an embed with a pre-defined color THEN returns valid toJSON data', () => {
-			const embed = new EmbedBuilder({ color: 0xff0000 });
-			expect(embed.toJSON()).toStrictEqual({ ...base, color: 0xff0000 });
+			const embed = new EmbedBuilder({ color: 0xff0000, ...dummy });
+			expect(embed.toJSON()).toStrictEqual({ ...base, ...dummy, color: 0xff0000 });
 		});
 
 		test('GIVEN an embed using Embed#setColor THEN returns valid toJSON data', () => {
-			expect(new EmbedBuilder().setColor(0xff0000).toJSON()).toStrictEqual({ ...base, color: 0xff0000 });
+			expect(new EmbedBuilder(dummy).setColor(0xff0000).toJSON()).toStrictEqual({ ...base, ...dummy, color: 0xff0000 });
 		});
 
 		test('GIVEN an embed with a pre-defined color THEN unset color THEN return valid toJSON data', () => {
-			const embed = new EmbedBuilder({ ...base, color: 0xff0000 });
+			const embed = new EmbedBuilder({ ...dummy, color: 0xff0000 });
 			embed.clearColor();
 
-			expect(embed.toJSON()).toStrictEqual({ ...base, color: undefined });
+			expect(embed.toJSON()).toStrictEqual({ ...base, ...dummy, color: undefined });
 		});
 
 		test('GIVEN an embed with an invalid color THEN throws error', () => {
@@ -155,36 +161,36 @@ describe('Embed', () => {
 		const now = new Date();
 
 		test('GIVEN an embed with a pre-defined timestamp THEN returns valid toJSON data', () => {
-			const embed = new EmbedBuilder({ timestamp: now.toISOString() });
-			expect(embed.toJSON()).toStrictEqual({ ...base, timestamp: now.toISOString() });
+			const embed = new EmbedBuilder({ timestamp: now.toISOString(), ...dummy });
+			expect(embed.toJSON()).toStrictEqual({ ...base, ...dummy, timestamp: now.toISOString() });
 		});
 
-		test('given an embed using Embed#setTimestamp (with Date) THEN returns valid toJSON data', () => {
-			const embed = new EmbedBuilder();
+		test('GIVEN an embed using Embed#setTimestamp (with Date) THEN returns valid toJSON data', () => {
+			const embed = new EmbedBuilder(dummy);
 			embed.setTimestamp(now);
 
-			expect(embed.toJSON()).toStrictEqual({ ...base, timestamp: now.toISOString() });
+			expect(embed.toJSON()).toStrictEqual({ ...base, ...dummy, timestamp: now.toISOString() });
 		});
 
 		test('GIVEN an embed using Embed#setTimestamp (with int) THEN returns valid toJSON data', () => {
-			const embed = new EmbedBuilder();
+			const embed = new EmbedBuilder(dummy);
 			embed.setTimestamp(now.getTime());
 
-			expect(embed.toJSON()).toStrictEqual({ ...base, timestamp: now.toISOString() });
+			expect(embed.toJSON()).toStrictEqual({ ...base, ...dummy, timestamp: now.toISOString() });
 		});
 
 		test('GIVEN an embed using Embed#setTimestamp (default) THEN returns valid toJSON data', () => {
-			const embed = new EmbedBuilder();
+			const embed = new EmbedBuilder(dummy);
 			embed.setTimestamp();
 
-			expect(embed.toJSON()).toStrictEqual({ ...base, timestamp: embed.toJSON().timestamp });
+			expect(embed.toJSON()).toStrictEqual({ ...base, ...dummy, timestamp: embed.toJSON().timestamp });
 		});
 
 		test('GIVEN an embed with a pre-defined timestamp THEN unset timestamp THEN return valid toJSON data', () => {
-			const embed = new EmbedBuilder({ timestamp: now.toISOString() });
+			const embed = new EmbedBuilder({ timestamp: now.toISOString(), ...dummy });
 			embed.clearTimestamp();
 
-			expect(embed.toJSON()).toStrictEqual({ ...base, timestamp: undefined });
+			expect(embed.toJSON()).toStrictEqual({ ...base, ...dummy, timestamp: undefined });
 		});
 	});
 
@@ -202,10 +208,10 @@ describe('Embed', () => {
 		});
 
 		test('GIVEN an embed with a pre-defined thumbnail THEN unset thumbnail THEN return valid toJSON data', () => {
-			const embed = new EmbedBuilder({ thumbnail: { url: 'https://discord.js.org/static/logo.svg' } });
+			const embed = new EmbedBuilder({ thumbnail: { url: 'https://discord.js.org/static/logo.svg' }, ...dummy });
 			embed.clearThumbnail();
 
-			expect(embed.toJSON()).toStrictEqual({ ...base, thumbnail: undefined });
+			expect(embed.toJSON()).toStrictEqual({ ...base, ...dummy, thumbnail: undefined });
 		});
 
 		test('GIVEN an embed with an invalid thumbnail THEN throws error', () => {
@@ -230,10 +236,10 @@ describe('Embed', () => {
 		});
 
 		test('GIVEN an embed with a pre-defined image THEN unset image THEN return valid toJSON data', () => {
-			const embed = new EmbedBuilder({ image: { url: 'https://discord.js/org/static/logo.svg' } });
+			const embed = new EmbedBuilder({ image: { url: 'https://discord.js/org/static/logo.svg' }, ...dummy });
 			embed.clearImage();
 
-			expect(embed.toJSON()).toStrictEqual({ ...base, image: undefined });
+			expect(embed.toJSON()).toStrictEqual({ ...base, ...dummy, image: undefined });
 		});
 
 		test('GIVEN an embed with an invalid image THEN throws error', () => {
@@ -270,10 +276,11 @@ describe('Embed', () => {
 		test('GIVEN an embed with a pre-defined author THEN unset author THEN return valid toJSON data', () => {
 			const embed = new EmbedBuilder({
 				author: { name: 'Wumpus', icon_url: 'https://discord.js.org/static/logo.svg', url: 'https://discord.js.org' },
+				...dummy,
 			});
 			embed.clearAuthor();
 
-			expect(embed.toJSON()).toStrictEqual({ ...base, author: undefined });
+			expect(embed.toJSON()).toStrictEqual({ ...base, ...dummy, author: undefined });
 		});
 
 		test('GIVEN an embed with an invalid author name THEN throws error', () => {
@@ -307,11 +314,12 @@ describe('Embed', () => {
 
 		test('GIVEN an embed with a pre-defined footer THEN unset footer THEN return valid toJSON data', () => {
 			const embed = new EmbedBuilder({
+				...dummy,
 				footer: { text: 'Wumpus', icon_url: 'https://discord.js.org/static/logo.svg' },
 			});
 			embed.clearFooter();
 
-			expect(embed.toJSON()).toStrictEqual({ ...base, footer: undefined });
+			expect(embed.toJSON()).toStrictEqual({ ...base, ...dummy, footer: undefined });
 		});
 
 		test('GIVEN an embed with invalid footer text THEN throws error', () => {
