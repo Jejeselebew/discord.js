@@ -7,7 +7,7 @@ const labelPredicate = z.string().min(1).max(80);
 export const emojiPredicate = z
 	.object({
 		id: z.string().optional(),
-		name: z.string().optional(),
+		name: z.string().min(2).max(32).optional(),
 		animated: z.boolean().optional(),
 	})
 	.strict()
