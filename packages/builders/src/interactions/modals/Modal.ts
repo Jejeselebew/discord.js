@@ -105,6 +105,61 @@ export class ModalBuilder implements JSONEncodable<APIModalInteractionResponseCa
 	}
 
 	/**
+	 * Removes, replaces, or inserts action rows for this modal.
+	 *
+	 * @remarks
+	 * This method behaves similarly
+	 * to {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/splice | Array.prototype.splice()}.
+	 * The maximum amount of action rows that can be added is 5.
+	 *
+	 * It's useful for modifying and adjusting order of the already-existing action rows of a modal.
+	 * @example
+	 * Remove the first action row:
+	 * ```ts
+	 * embed.spliceActionRows(0, 1);
+	 * ```
+	 * @example
+	 * Remove the first n action rows:
+	 * ```ts
+	 * const n = 4;
+	 * embed.spliceActionRows(0, n);
+	 * ```
+	 * @example
+	 * Remove the last action row:
+	 * ```ts
+	 * embed.spliceActionRows(-1, 1);
+	 * ```
+	 * @param index - The index to start at
+	 * @param deleteCount - The number of action rows to remove
+	 * @param rows - The replacing action row objects
+	 */
+	public spliceActionRows(
+		index: number,
+		deleteCount: number,
+		...rows: (
+			| ActionRowBuilder
+			| APIActionRowComponent<APIModalActionRowComponent>
+			| ((builder: ActionRowBuilder) => ActionRowBuilder)
+		)[]
+	): this {
+		const resolved = rows.map((row) => {
+			if (row instanceof ActionRowBuilder) {
+				return row;
+			}
+
+			if (typeof row === 'function') {
+				return row(new ActionRowBuilder());
+			}
+
+			return new ActionRowBuilder(row);
+		});
+
+		this.data.components.splice(index, deleteCount, ...resolved);
+
+		return this;
+	}
+
+	/**
 	 * Serializes this builder to API-compatible JSON data.
 	 *
 	 * Note that by disabling validation, there is no guarantee that the resulting object will be valid.
