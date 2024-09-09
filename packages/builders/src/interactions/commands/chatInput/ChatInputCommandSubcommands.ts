@@ -5,7 +5,7 @@ import type {
 } from 'discord-api-types/v10';
 import { ApplicationCommandOptionType } from 'discord-api-types/v10';
 import { Mixin } from 'ts-mixer';
-import { isValidationEnabled } from '../../util/validation.js';
+import { isValidationEnabled } from '../../../util/validation.js';
 import { chatInputCommandSubcommandGroupPredicate, chatInputCommandSubcommandPredicate } from './Assertions.js';
 import { SharedChatInputCommandOptions } from './mixins/SharedChatInputCommandOptions.js';
 import type { SharedNameAndDescriptionData } from './mixins/SharedNameAndDescription.js';

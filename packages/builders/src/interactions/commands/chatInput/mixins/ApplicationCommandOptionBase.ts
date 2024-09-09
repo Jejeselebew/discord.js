@@ -5,7 +5,7 @@ import type {
 	ApplicationCommandOptionType,
 } from 'discord-api-types/v10';
 import type { z } from 'zod';
-import { isValidationEnabled } from '../../../util/validation.js';
+import { isValidationEnabled } from '../../../../util/validation.js';
 import { basicOptionPredicate } from '../Assertions.js';
 import type { SharedNameAndDescriptionData } from './SharedNameAndDescription.js';
 import { SharedNameAndDescription } from './SharedNameAndDescription.js';

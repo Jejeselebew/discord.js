@@ -5,9 +5,9 @@ import {
 	PermissionFlagsBits,
 } from 'discord-api-types/v10';
 import { describe, test, expect } from 'vitest';
-import { ContextMenuCommandAssertions, ContextMenuCommandBuilder } from '../../src/index.js';
+import { ContextMenuCommandAssertions, MessageCommandBuilder } from '../../src/index.js';
 
-const getBuilder = () => new ContextMenuCommandBuilder().setType(ApplicationCommandType.Message);
+const getBuilder = () => new MessageCommandBuilder();
 
 describe('Context Menu Commands', () => {
 	describe('Assertions tests', () => {
@@ -48,10 +48,6 @@ describe('Context Menu Commands', () => {
 				expect(() => getBuilder().toJSON()).toThrowError();
 			});
 
-			test('GIVEN valid builder THEN does not throw error', () => {
-				expect(() => getBuilder().setName('example').setType(3).toJSON()).not.toThrowError();
-			});
-
 			test('GIVEN invalid name THEN throw error', () => {
 				expect(() => getBuilder().setName('$$$').toJSON()).toThrowError();
 
@@ -68,12 +64,6 @@ describe('Context Menu Commands', () => {
 
 				// Translation: thx (according to GTranslate)
 				expect(() => getBuilder().setName('どうも')).not.toThrowError();
-			});
-
-			test('GIVEN valid types THEN does not throw error', () => {
-				expect(() => getBuilder().setType(2)).not.toThrowError();
-
-				expect(() => getBuilder().setType(3)).not.toThrowError();
 			});
 		});
 

@@ -6,10 +6,9 @@ import type {
 	Permissions,
 	RESTPostAPIContextMenuApplicationCommandsJSONBody,
 } from 'discord-api-types/v10';
-import type { RestOrArray } from '../../util/normalizeArray.js';
-import { normalizeArray } from '../../util/normalizeArray.js';
-import { isValidationEnabled } from '../../util/validation.js';
-import { contextMenuPredicate } from './Assertions.js';
+import type { RestOrArray } from '../../../util/normalizeArray.js';
+import { normalizeArray } from '../../../util/normalizeArray.js';
+import { CommandBuilder } from '../Command.js';
 
 /**
  * The type a context menu command can be.
@@ -19,10 +18,11 @@ export type ContextMenuCommandType = ApplicationCommandType.Message | Applicatio
 /**
  * A builder that creates API-compatible JSON data for context menu commands.
  */
-export class ContextMenuCommandBuilder {
-	private readonly data: Partial<RESTPostAPIContextMenuApplicationCommandsJSONBody>;
+export abstract class ContextMenuCommandBuilder extends CommandBuilder<RESTPostAPIContextMenuApplicationCommandsJSONBody> {
+	protected readonly data: Partial<RESTPostAPIContextMenuApplicationCommandsJSONBody>;
 
 	public constructor(data: Partial<RESTPostAPIContextMenuApplicationCommandsJSONBody> = {}) {
+		super();
 		this.data = structuredClone(data);
 	}
 
@@ -53,16 +53,6 @@ export class ContextMenuCommandBuilder {
 	 */
 	public setName(name: string) {
 		this.data.name = name;
-		return this;
-	}
-
-	/**
-	 * Sets the type of this command.
-	 *
-	 * @param type - The type to use
-	 */
-	public setType(type: ContextMenuCommandType) {
-		this.data.type = type;
 		return this;
 	}
 
@@ -146,19 +136,7 @@ export class ContextMenuCommandBuilder {
 	}
 
 	/**
-	 * Serializes this builder to API-compatible JSON data.
-	 *
-	 * Note that by disabling validation, there is no guarantee that the resulting object will be valid.
-	 *
-	 * @param validationOverride - Force validation to run/not run regardless of your global preference
+	 * {@inheritDoc CommandBuilder.toJSON}
 	 */
-	public toJSON(validationOverride?: boolean): RESTPostAPIContextMenuApplicationCommandsJSONBody {
-		const data = structuredClone(this.data);
-
-		if (validationOverride ?? isValidationEnabled()) {
-			contextMenuPredicate.parse(data);
-		}
-
-		return data as RESTPostAPIContextMenuApplicationCommandsJSONBody;
-	}
+	public abstract override toJSON(validationOverride?: boolean): RESTPostAPIContextMenuApplicationCommandsJSONBody;
 }

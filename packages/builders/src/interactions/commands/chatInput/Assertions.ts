@@ -5,7 +5,7 @@ import {
 } from 'discord-api-types/v10';
 import type { ZodTypeAny } from 'zod';
 import { z } from 'zod';
-import { localeMapPredicate, memberPermissionsPredicate } from '../../Assertions.js';
+import { localeMapPredicate, memberPermissionsPredicate } from '../../../Assertions.js';
 import { allowedChannelTypes } from './mixins/ApplicationCommandOptionChannelTypesMixin.js';
 
 export const namePredicate = z

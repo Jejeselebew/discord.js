@@ -1,6 +1,6 @@
 import { ApplicationCommandType, ApplicationIntegrationType, InteractionContextType } from 'discord-api-types/v10';
 import { z } from 'zod';
-import { localeMapPredicate, memberPermissionsPredicate } from '../../Assertions.js';
+import { localeMapPredicate, memberPermissionsPredicate } from '../../../Assertions.js';
 
 export const namePredicate = z
 	.string()
@@ -16,12 +16,19 @@ export const typePredicate = z.union([
 export const contextsPredicate = z.array(z.nativeEnum(InteractionContextType));
 export const integrationTypesPredicate = z.array(z.nativeEnum(ApplicationIntegrationType));
 
-export const contextMenuPredicate = z.object({
-	type: typePredicate,
+export const baseContextMenuCommandPredicate = z.object({
 	contexts: contextsPredicate.optional(),
 	default_member_permissions: memberPermissionsPredicate.optional(),
 	name: namePredicate,
 	name_localizations: localeMapPredicate.optional(),
 	integration_types: integrationTypesPredicate.optional(),
 	nsfw: z.boolean().optional(),
+});
+
+export const userCommandPredicate = baseContextMenuCommandPredicate.extend({
+	type: z.literal(ApplicationCommandType.User),
+});
+
+export const messageCommandPredicate = baseContextMenuCommandPredicate.extend({
+	type: z.literal(ApplicationCommandType.Message),
 });
