@@ -42,7 +42,7 @@ export class EmbedFieldBuilder {
 	 *
 	 * @param inline - Whether this field should display inline
 	 */
-	public setInline(inline: boolean): this {
+	public setInline(inline = true): this {
 		this.data.inline = inline;
 		return this;
 	}
