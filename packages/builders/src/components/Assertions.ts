@@ -20,6 +20,19 @@ const buttonPredicateBase = z.object({
 	disabled: z.boolean().optional(),
 });
 
+const buttonCustomIdPredicateBase = buttonPredicateBase.extend({
+	custom_id: customIdPredicate,
+	emoji: emojiPredicate.optional(),
+	label: labelPredicate,
+});
+
+const buttonPrimaryPredicate = buttonCustomIdPredicateBase.extend({ style: z.literal(ButtonStyle.Primary) }).strict();
+const buttonSecondaryPredicate = buttonCustomIdPredicateBase
+	.extend({ style: z.literal(ButtonStyle.Secondary) })
+	.strict();
+const buttonSuccessPredicate = buttonCustomIdPredicateBase.extend({ style: z.literal(ButtonStyle.Success) }).strict();
+const buttonDangerPredicate = buttonCustomIdPredicateBase.extend({ style: z.literal(ButtonStyle.Danger) }).strict();
+
 const buttonLinkPredicate = buttonPredicateBase
 	.extend({
 		style: z.literal(ButtonStyle.Link),
@@ -32,20 +45,6 @@ const buttonLinkPredicate = buttonPredicateBase
 	})
 	.strict();
 
-const buttonCustomIdPredicate = buttonPredicateBase
-	.extend({
-		style: z.union([
-			z.literal(ButtonStyle.Primary),
-			z.literal(ButtonStyle.Secondary),
-			z.literal(ButtonStyle.Success),
-			z.literal(ButtonStyle.Danger),
-		]),
-		custom_id: customIdPredicate,
-		emoji: emojiPredicate.optional(),
-		label: labelPredicate,
-	})
-	.strict();
-
 const buttonPremiumPredicate = buttonPredicateBase
 	.extend({
 		style: z.literal(ButtonStyle.Premium),
@@ -53,7 +52,14 @@ const buttonPremiumPredicate = buttonPredicateBase
 	})
 	.strict();
 
-export const buttonPredicate = z.union([buttonLinkPredicate, buttonCustomIdPredicate, buttonPremiumPredicate]);
+export const buttonPredicate = z.discriminatedUnion('style', [
+	buttonLinkPredicate,
+	buttonPrimaryPredicate,
+	buttonSecondaryPredicate,
+	buttonSuccessPredicate,
+	buttonDangerPredicate,
+	buttonPremiumPredicate,
+]);
 
 const selectMenuBasePredicate = z.object({
 	placeholder: z.string().max(150).optional(),
