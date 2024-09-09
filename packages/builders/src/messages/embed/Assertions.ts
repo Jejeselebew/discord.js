@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { refineURLPredicate } from '../../Assertions.js';
+import { embedLength } from '../../util/componentUtil.js';
 
 export const namePredicate = z.string().min(1).max(256);
 
@@ -46,8 +47,24 @@ export const embedPredicate = z
 		fields: z.array(embedFieldPredicate).max(25).optional(),
 	})
 	.refine(
-		(value) => {
-			return Object.keys(value).length > 0;
+		(embed) => {
+			return (
+				embed.title !== undefined ||
+				embed.description !== undefined ||
+				(embed.fields !== undefined && embed.fields.length > 0) ||
+				embed.footer !== undefined ||
+				embed.author !== undefined ||
+				embed.image !== undefined ||
+				embed.thumbnail !== undefined
+			);
 		},
-		{ message: 'Embed must have at least one property set' },
+		{
+			message: 'Embed must have at least a title, description, a field, a footer, an author, an image, OR a thumbnail.',
+		},
+	)
+	.refine(
+		(embed) => {
+			return embedLength(embed) <= 6_000;
+		},
+		{ message: 'Embeds must not exceed 6000 characters in total.' },
 	);
