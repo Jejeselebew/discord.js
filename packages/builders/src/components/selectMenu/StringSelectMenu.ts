@@ -172,7 +172,7 @@ export class StringSelectMenuBuilder extends BaseSelectMenuBuilder<APIStringSele
 		const data = {
 			...(structuredClone(rest) as APIStringSelectComponent),
 			// selectMenuStringPredicate covers the validation of options
-			options: options?.map((option) => option.toJSON(false)),
+			options: options.map((option) => option.toJSON(false)),
 		};
 
 		if (validationOverride ?? isValidationEnabled()) {
