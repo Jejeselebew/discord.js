@@ -22,7 +22,7 @@ export class ApplicationCommandOptionWithAutocompleteMixin {
 	 *
 	 * @param autocomplete - Whether this option should use autocomplete
 	 */
-	public setAutocomplete(autocomplete: boolean): this {
+	public setAutocomplete(autocomplete = true): this {
 		this.data.autocomplete = autocomplete;
 		return this;
 	}

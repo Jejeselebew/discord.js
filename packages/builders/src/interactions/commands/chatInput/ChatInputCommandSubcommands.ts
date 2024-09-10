@@ -56,8 +56,8 @@ export class ChatInputCommandSubcommandGroupBuilder
 		const { options, ...rest } = this.data;
 
 		const data = {
-			type: ApplicationCommandOptionType.SubcommandGroup as const,
 			...(structuredClone(rest) as Omit<APIApplicationCommandSubcommandGroupOption, 'type'>),
+			type: ApplicationCommandOptionType.SubcommandGroup as const,
 			options: options?.map((option) => option.toJSON(validationOverride)) ?? [],
 		};
 

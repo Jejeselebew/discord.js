@@ -35,7 +35,7 @@ export abstract class ApplicationCommandOptionBase
 	 *
 	 * @param required - Whether this option should be required
 	 */
-	public setRequired(required: boolean) {
+	public setRequired(required = true) {
 		this.data.required = required;
 		return this;
 	}

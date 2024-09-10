@@ -130,7 +130,7 @@ export abstract class ContextMenuCommandBuilder extends CommandBuilder<RESTPostA
 	 *
 	 * @param nsfw - Whether this command is NSFW
 	 */
-	public setNsfw(nsfw: boolean) {
+	public setNsfw(nsfw = true) {
 		this.data.nsfw = nsfw;
 		return this;
 	}

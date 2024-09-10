@@ -3,7 +3,7 @@ import { z } from 'zod';
 
 export const customIdPredicate = z.string().min(1).max(100);
 
-export const memberPermissionsPredicate = z.coerce.bigint().transform(String);
+export const memberPermissionsPredicate = z.coerce.bigint();
 
 export const localeMapPredicate = z
 	.object(

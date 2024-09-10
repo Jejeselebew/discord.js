@@ -71,6 +71,9 @@ export class SharedNameAndDescription {
 		return this;
 	}
 
+	/**
+	 * Clears all name localizations for this command.
+	 */
 	public clearNameLocalizations() {
 		this.data.name_localizations = undefined;
 		return this;
@@ -116,6 +119,9 @@ export class SharedNameAndDescription {
 		return this;
 	}
 
+	/**
+	 * Clears all description localizations for this command.
+	 */
 	public clearDescriptionLocalizations() {
 		this.data.description_localizations = undefined;
 		return this;
