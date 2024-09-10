@@ -2,6 +2,7 @@ import type { JSONEncodable } from '@discordjs/util';
 import type { APIEmbed, APIEmbedAuthor, APIEmbedField, APIEmbedFooter } from 'discord-api-types/v10';
 import type { RestOrArray } from '../../util/normalizeArray.js';
 import { normalizeArray } from '../../util/normalizeArray.js';
+import { resolveBuilder } from '../../util/resolveBuilder.js';
 import { isValidationEnabled } from '../../util/validation.js';
 import { embedPredicate } from './Assertions.js';
 import { EmbedAuthorBuilder } from './EmbedAuthor.js';
@@ -75,17 +76,7 @@ export class EmbedBuilder implements JSONEncodable<APIEmbed> {
 		...fields: RestOrArray<APIEmbedField | EmbedFieldBuilder | ((builder: EmbedFieldBuilder) => EmbedFieldBuilder)>
 	): this {
 		const normalizedFields = normalizeArray(fields);
-		const resolved = normalizedFields.map((field) => {
-			if (field instanceof EmbedFieldBuilder) {
-				return field;
-			}
-
-			if (typeof field === 'function') {
-				return field(new EmbedFieldBuilder());
-			}
-
-			return new EmbedFieldBuilder(field);
-		});
+		const resolved = normalizedFields.map((field) => resolveBuilder(field, EmbedFieldBuilder));
 
 		this.data.fields.push(...resolved);
 		return this;
@@ -125,18 +116,7 @@ export class EmbedBuilder implements JSONEncodable<APIEmbed> {
 		deleteCount: number,
 		...fields: (APIEmbedField | EmbedFieldBuilder | ((builder: EmbedFieldBuilder) => EmbedFieldBuilder))[]
 	): this {
-		const resolved = fields.map((field) => {
-			if (field instanceof EmbedFieldBuilder) {
-				return field;
-			}
-
-			if (typeof field === 'function') {
-				return field(new EmbedFieldBuilder());
-			}
-
-			return new EmbedFieldBuilder(field);
-		});
-
+		const resolved = fields.map((field) => resolveBuilder(field, EmbedFieldBuilder));
 		this.data.fields.splice(index, deleteCount, ...resolved);
 
 		return this;
@@ -167,14 +147,7 @@ export class EmbedBuilder implements JSONEncodable<APIEmbed> {
 	public setAuthor(
 		options: APIEmbedAuthor | EmbedAuthorBuilder | ((builder: EmbedAuthorBuilder) => EmbedAuthorBuilder),
 	): this {
-		if (options instanceof EmbedAuthorBuilder) {
-			this.data.author = options;
-		} else if (typeof options === 'function') {
-			this.data.author = options(new EmbedAuthorBuilder());
-		} else {
-			this.data.author = new EmbedAuthorBuilder(options);
-		}
-
+		this.data.author = resolveBuilder(options, EmbedAuthorBuilder);
 		return this;
 	}
 
@@ -240,14 +213,7 @@ export class EmbedBuilder implements JSONEncodable<APIEmbed> {
 	public setFooter(
 		options: APIEmbedFooter | EmbedFooterBuilder | ((builder: EmbedFooterBuilder) => EmbedFooterBuilder),
 	): this {
-		if (options instanceof EmbedFooterBuilder) {
-			this.data.footer = options;
-		} else if (typeof options === 'function') {
-			this.data.footer = options(new EmbedFooterBuilder());
-		} else {
-			this.data.footer = new EmbedFooterBuilder(options);
-		}
-
+		this.data.footer = resolveBuilder(options, EmbedFooterBuilder);
 		return this;
 	}
 

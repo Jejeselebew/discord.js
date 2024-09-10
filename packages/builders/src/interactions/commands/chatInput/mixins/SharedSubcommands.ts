@@ -1,3 +1,4 @@
+import { resolveBuilder } from '../../../../util/resolveBuilder.js';
 import {
 	ChatInputCommandSubcommandBuilder,
 	ChatInputCommandSubcommandGroupBuilder,
@@ -27,7 +28,7 @@ export class SharedChatInputCommandSubcommands {
 	): this {
 		this.data.options ??= [];
 
-		const result = typeof input === 'function' ? input(new ChatInputCommandSubcommandGroupBuilder()) : input;
+		const result = resolveBuilder(input, ChatInputCommandSubcommandGroupBuilder);
 		this.data.options.push(result);
 
 		return this;
@@ -45,7 +46,7 @@ export class SharedChatInputCommandSubcommands {
 	): this {
 		this.data.options ??= [];
 
-		const result = typeof input === 'function' ? input(new ChatInputCommandSubcommandBuilder()) : input;
+		const result = resolveBuilder(input, ChatInputCommandSubcommandBuilder);
 		this.data.options.push(result);
 
 		return this;

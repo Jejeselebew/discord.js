@@ -3,6 +3,7 @@
 import { ComponentType } from 'discord-api-types/v10';
 import type { APIStringSelectComponent, APISelectMenuOption } from 'discord-api-types/v10';
 import { normalizeArray, type RestOrArray } from '../../util/normalizeArray.js';
+import { resolveBuilder } from '../../util/resolveBuilder.js';
 import { isValidationEnabled } from '../../util/validation.js';
 import { selectMenuStringPredicate } from '../Assertions.js';
 import { BaseSelectMenuBuilder } from './BaseSelectMenu.js';
@@ -78,19 +79,9 @@ export class StringSelectMenuBuilder extends BaseSelectMenuBuilder<APIStringSele
 		>
 	) {
 		const normalizedOptions = normalizeArray(options);
-		this.data.options.push(
-			...normalizedOptions.map((option) => {
-				if (option instanceof StringSelectMenuOptionBuilder) {
-					return option;
-				}
+		const resolved = normalizedOptions.map((option) => resolveBuilder(option, StringSelectMenuOptionBuilder));
 
-				if (typeof option === 'function') {
-					return option(new StringSelectMenuOptionBuilder());
-				}
-
-				return new StringSelectMenuOptionBuilder(option);
-			}),
-		);
+		this.data.options.push(...resolved);
 
 		return this;
 	}
@@ -146,17 +137,7 @@ export class StringSelectMenuBuilder extends BaseSelectMenuBuilder<APIStringSele
 			| ((builder: StringSelectMenuOptionBuilder) => StringSelectMenuOptionBuilder)
 		)[]
 	) {
-		const resolved = options.map((option) => {
-			if (option instanceof StringSelectMenuOptionBuilder) {
-				return option;
-			}
-
-			if (typeof option === 'function') {
-				return option(new StringSelectMenuOptionBuilder());
-			}
-
-			return new StringSelectMenuOptionBuilder(option);
-		});
+		const resolved = options.map((option) => resolveBuilder(option, StringSelectMenuOptionBuilder));
 
 		this.data.options ??= [];
 		this.data.options.splice(index, deleteCount, ...resolved);

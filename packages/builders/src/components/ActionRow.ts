@@ -1,7 +1,19 @@
 /* eslint-disable jsdoc/check-param-names */
 
-import { ComponentType, type APIActionRowComponent, type APIActionRowComponentTypes } from 'discord-api-types/v10';
+import type {
+	APITextInputComponent,
+	APIActionRowComponent,
+	APIActionRowComponentTypes,
+	APIButtonComponent,
+	APIChannelSelectComponent,
+	APIMentionableSelectComponent,
+	APIRoleSelectComponent,
+	APIStringSelectComponent,
+	APIUserSelectComponent,
+} from 'discord-api-types/v10';
+import { ComponentType } from 'discord-api-types/v10';
 import { normalizeArray, type RestOrArray } from '../util/normalizeArray.js';
+import { resolveBuilder } from '../util/resolveBuilder.js';
 import { isValidationEnabled } from '../util/validation.js';
 import { actionRowPredicate } from './Assertions.js';
 import { ComponentBuilder } from './Component.js';
@@ -83,7 +95,9 @@ export class ActionRowBuilder extends ComponentBuilder<APIActionRowComponent<API
 	 *
 	 * @param input - A function that returns an option builder or an already built builder
 	 */
-	public addButtonComponents(...input: RestOrArray<ButtonBuilder | ((builder: ButtonBuilder) => ButtonBuilder)>): this {
+	public addButtonComponents(
+		...input: RestOrArray<APIButtonComponent | ButtonBuilder | ((builder: ButtonBuilder) => ButtonBuilder)>
+	): this {
 		const normalized = normalizeArray(input);
 		for (const button of normalized) {
 			this.sharedAddComponent(button, ButtonBuilder);
@@ -98,7 +112,10 @@ export class ActionRowBuilder extends ComponentBuilder<APIActionRowComponent<API
 	 * @param input - A function that returns a component builder or an already built builder
 	 */
 	public addChannelSelectMenuComponent(
-		input: ChannelSelectMenuBuilder | ((builder: ChannelSelectMenuBuilder) => ChannelSelectMenuBuilder),
+		input:
+			| APIChannelSelectComponent
+			| ChannelSelectMenuBuilder
+			| ((builder: ChannelSelectMenuBuilder) => ChannelSelectMenuBuilder),
 	): this {
 		return this.sharedAddComponent(input, ChannelSelectMenuBuilder);
 	}
@@ -109,7 +126,10 @@ export class ActionRowBuilder extends ComponentBuilder<APIActionRowComponent<API
 	 * @param input - A function that returns a component builder or an already built builder
 	 */
 	public addMentionableSelectMenuComponent(
-		input: MentionableSelectMenuBuilder | ((builder: MentionableSelectMenuBuilder) => MentionableSelectMenuBuilder),
+		input:
+			| APIMentionableSelectComponent
+			| MentionableSelectMenuBuilder
+			| ((builder: MentionableSelectMenuBuilder) => MentionableSelectMenuBuilder),
 	): this {
 		return this.sharedAddComponent(input, MentionableSelectMenuBuilder);
 	}
@@ -120,7 +140,7 @@ export class ActionRowBuilder extends ComponentBuilder<APIActionRowComponent<API
 	 * @param input - A function that returns a component builder or an already built builder
 	 */
 	public addRoleSelectMenuComponent(
-		input: RoleSelectMenuBuilder | ((builder: RoleSelectMenuBuilder) => RoleSelectMenuBuilder),
+		input: APIRoleSelectComponent | RoleSelectMenuBuilder | ((builder: RoleSelectMenuBuilder) => RoleSelectMenuBuilder),
 	): this {
 		return this.sharedAddComponent(input, RoleSelectMenuBuilder);
 	}
@@ -131,7 +151,10 @@ export class ActionRowBuilder extends ComponentBuilder<APIActionRowComponent<API
 	 * @param input - A function that returns a component builder or an already built builder
 	 */
 	public addStringSelectMenuComponent(
-		input: StringSelectMenuBuilder | ((builder: StringSelectMenuBuilder) => StringSelectMenuBuilder),
+		input:
+			| APIStringSelectComponent
+			| StringSelectMenuBuilder
+			| ((builder: StringSelectMenuBuilder) => StringSelectMenuBuilder),
 	): this {
 		return this.sharedAddComponent(input, StringSelectMenuBuilder);
 	}
@@ -142,7 +165,7 @@ export class ActionRowBuilder extends ComponentBuilder<APIActionRowComponent<API
 	 * @param input - A function that returns a component builder or an already built builder
 	 */
 	public addUserSelectMenuComponent(
-		input: UserSelectMenuBuilder | ((builder: UserSelectMenuBuilder) => UserSelectMenuBuilder),
+		input: APIUserSelectComponent | UserSelectMenuBuilder | ((builder: UserSelectMenuBuilder) => UserSelectMenuBuilder),
 	): this {
 		return this.sharedAddComponent(input, UserSelectMenuBuilder);
 	}
@@ -152,7 +175,9 @@ export class ActionRowBuilder extends ComponentBuilder<APIActionRowComponent<API
 	 *
 	 * @param input - A function that returns a component builder or an already built builder
 	 */
-	public addTextInputComponent(input: TextInputBuilder | ((builder: TextInputBuilder) => TextInputBuilder)): this {
+	public addTextInputComponent(
+		input: APITextInputComponent | TextInputBuilder | ((builder: TextInputBuilder) => TextInputBuilder),
+	): this {
 		return this.sharedAddComponent(input, TextInputBuilder);
 	}
 
@@ -177,12 +202,12 @@ export class ActionRowBuilder extends ComponentBuilder<APIActionRowComponent<API
 	/**
 	 * @internal
 	 */
-	private sharedAddComponent<Component extends AnyActionRowComponentBuilder>(
-		input: Component | ((builder: Component) => Component),
-		Instance: new () => Component,
-	) {
-		const result = typeof input === 'function' ? input(new Instance()) : input;
-		this.data.components.push(result);
+	private sharedAddComponent<
+		Component extends AnyActionRowComponentBuilder,
+		ComponentData extends Record<keyof any, any>,
+	>(component: Component | ComponentData | ((builder: Component) => Component), Constructor: new () => Component) {
+		const resolved = resolveBuilder(component, Constructor);
+		this.data.components.push(resolved);
 
 		return this;
 	}

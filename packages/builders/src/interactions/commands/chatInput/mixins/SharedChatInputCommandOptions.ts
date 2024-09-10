@@ -1,3 +1,4 @@
+import { resolveBuilder } from '../../../../util/resolveBuilder.js';
 import { ChatInputCommandAttachmentOption } from '../options/attachment.js';
 import { ChatInputCommandBooleanOption } from '../options/boolean.js';
 import { ChatInputCommandChannelOption } from '../options/channel.js';
@@ -136,7 +137,7 @@ export class SharedChatInputCommandOptions {
 	): this {
 		this.data.options ??= [];
 
-		const result = typeof input === 'function' ? input(new Instance()) : input;
+		const result = resolveBuilder(input, Instance);
 		this.data.options.push(result);
 
 		return this;

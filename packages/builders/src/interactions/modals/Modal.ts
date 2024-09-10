@@ -9,6 +9,7 @@ import type {
 import { ActionRowBuilder } from '../../components/ActionRow.js';
 import { createComponentBuilder } from '../../components/Components.js';
 import { normalizeArray, type RestOrArray } from '../../util/normalizeArray.js';
+import { resolveBuilder } from '../../util/resolveBuilder.js';
 import { isValidationEnabled } from '../../util/validation.js';
 import { modalPredicate } from './Assertions.js';
 
@@ -77,17 +78,7 @@ export class ModalBuilder implements JSONEncodable<APIModalInteractionResponseCa
 		>
 	) {
 		const normalized = normalizeArray(components);
-		const resolved = normalized.map((component) => {
-			if (component instanceof ActionRowBuilder) {
-				return component;
-			}
-
-			if (typeof component === 'function') {
-				return component(new ActionRowBuilder());
-			}
-
-			return new ActionRowBuilder(component);
-		});
+		const resolved = normalized.map((row) => resolveBuilder(row, ActionRowBuilder));
 
 		this.data.components.push(...resolved);
 
@@ -142,18 +133,7 @@ export class ModalBuilder implements JSONEncodable<APIModalInteractionResponseCa
 			| ((builder: ActionRowBuilder) => ActionRowBuilder)
 		)[]
 	): this {
-		const resolved = rows.map((row) => {
-			if (row instanceof ActionRowBuilder) {
-				return row;
-			}
-
-			if (typeof row === 'function') {
-				return row(new ActionRowBuilder());
-			}
-
-			return new ActionRowBuilder(row);
-		});
-
+		const resolved = rows.map((row) => resolveBuilder(row, ActionRowBuilder));
 		this.data.components.splice(index, deleteCount, ...resolved);
 
 		return this;

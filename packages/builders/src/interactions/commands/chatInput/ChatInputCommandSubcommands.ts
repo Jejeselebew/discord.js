@@ -5,6 +5,7 @@ import type {
 } from 'discord-api-types/v10';
 import { ApplicationCommandOptionType } from 'discord-api-types/v10';
 import { Mixin } from 'ts-mixer';
+import { resolveBuilder } from '../../../util/resolveBuilder.js';
 import { isValidationEnabled } from '../../../util/validation.js';
 import { chatInputCommandSubcommandGroupPredicate, chatInputCommandSubcommandPredicate } from './Assertions.js';
 import { SharedChatInputCommandOptions } from './mixins/SharedChatInputCommandOptions.js';
@@ -37,7 +38,7 @@ export class ChatInputCommandSubcommandGroupBuilder
 			| ((subcommandGroup: ChatInputCommandSubcommandBuilder) => ChatInputCommandSubcommandBuilder),
 	) {
 		// eslint-disable-next-line @typescript-eslint/no-use-before-define
-		const result = typeof input === 'function' ? input(new ChatInputCommandSubcommandBuilder()) : input;
+		const result = resolveBuilder(input, ChatInputCommandSubcommandBuilder);
 
 		this.data.options ??= [];
 		this.data.options.push(result);
