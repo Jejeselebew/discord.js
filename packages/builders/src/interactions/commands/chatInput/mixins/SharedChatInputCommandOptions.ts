@@ -29,7 +29,7 @@ export class SharedChatInputCommandOptions {
 	public addBooleanOption(
 		input: ChatInputCommandBooleanOption | ((builder: ChatInputCommandBooleanOption) => ChatInputCommandBooleanOption),
 	) {
-		return this.sharedAddOptionMethod(input, ChatInputCommandBooleanOption);
+		return this.sharedAddOption(input, ChatInputCommandBooleanOption);
 	}
 
 	/**
@@ -40,7 +40,7 @@ export class SharedChatInputCommandOptions {
 	public addUserOption(
 		input: ChatInputCommandUserOption | ((builder: ChatInputCommandUserOption) => ChatInputCommandUserOption),
 	) {
-		return this.sharedAddOptionMethod(input, ChatInputCommandUserOption);
+		return this.sharedAddOption(input, ChatInputCommandUserOption);
 	}
 
 	/**
@@ -51,7 +51,7 @@ export class SharedChatInputCommandOptions {
 	public addChannelOption(
 		input: ChatInputCommandChannelOption | ((builder: ChatInputCommandChannelOption) => ChatInputCommandChannelOption),
 	) {
-		return this.sharedAddOptionMethod(input, ChatInputCommandChannelOption);
+		return this.sharedAddOption(input, ChatInputCommandChannelOption);
 	}
 
 	/**
@@ -62,7 +62,7 @@ export class SharedChatInputCommandOptions {
 	public addRoleOption(
 		input: ChatInputCommandRoleOption | ((builder: ChatInputCommandRoleOption) => ChatInputCommandRoleOption),
 	) {
-		return this.sharedAddOptionMethod(input, ChatInputCommandRoleOption);
+		return this.sharedAddOption(input, ChatInputCommandRoleOption);
 	}
 
 	/**
@@ -75,7 +75,7 @@ export class SharedChatInputCommandOptions {
 			| ChatInputCommandAttachmentOption
 			| ((builder: ChatInputCommandAttachmentOption) => ChatInputCommandAttachmentOption),
 	) {
-		return this.sharedAddOptionMethod(input, ChatInputCommandAttachmentOption);
+		return this.sharedAddOption(input, ChatInputCommandAttachmentOption);
 	}
 
 	/**
@@ -88,7 +88,7 @@ export class SharedChatInputCommandOptions {
 			| ChatInputCommandMentionableOption
 			| ((builder: ChatInputCommandMentionableOption) => ChatInputCommandMentionableOption),
 	) {
-		return this.sharedAddOptionMethod(input, ChatInputCommandMentionableOption);
+		return this.sharedAddOption(input, ChatInputCommandMentionableOption);
 	}
 
 	/**
@@ -99,7 +99,7 @@ export class SharedChatInputCommandOptions {
 	public addStringOption(
 		input: ChatInputCommandStringOption | ((builder: ChatInputCommandStringOption) => ChatInputCommandStringOption),
 	) {
-		return this.sharedAddOptionMethod(input, ChatInputCommandStringOption);
+		return this.sharedAddOption(input, ChatInputCommandStringOption);
 	}
 
 	/**
@@ -110,7 +110,7 @@ export class SharedChatInputCommandOptions {
 	public addIntegerOption(
 		input: ChatInputCommandIntegerOption | ((builder: ChatInputCommandIntegerOption) => ChatInputCommandIntegerOption),
 	) {
-		return this.sharedAddOptionMethod(input, ChatInputCommandIntegerOption);
+		return this.sharedAddOption(input, ChatInputCommandIntegerOption);
 	}
 
 	/**
@@ -121,7 +121,7 @@ export class SharedChatInputCommandOptions {
 	public addNumberOption(
 		input: ChatInputCommandNumberOption | ((builder: ChatInputCommandNumberOption) => ChatInputCommandNumberOption),
 	) {
-		return this.sharedAddOptionMethod(input, ChatInputCommandNumberOption);
+		return this.sharedAddOption(input, ChatInputCommandNumberOption);
 	}
 
 	/**
@@ -131,7 +131,7 @@ export class SharedChatInputCommandOptions {
 	 * @param Instance - The instance of whatever is being added
 	 * @internal
 	 */
-	private sharedAddOptionMethod<OptionBuilder extends ApplicationCommandOptionBase>(
+	private sharedAddOption<OptionBuilder extends ApplicationCommandOptionBase>(
 		input: OptionBuilder | ((builder: OptionBuilder) => OptionBuilder),
 		Instance: new () => OptionBuilder,
 	): this {
