@@ -6,7 +6,7 @@ import {
 import type { ZodTypeAny } from 'zod';
 import { z } from 'zod';
 import { localeMapPredicate, memberPermissionsPredicate } from '../../../Assertions.js';
-import { allowedChannelTypes } from './mixins/ApplicationCommandOptionChannelTypesMixin.js';
+import { applicationCommandOptionAllowedChannelTypes } from './mixins/ApplicationCommandOptionChannelTypesMixin.js';
 
 export const namePredicate = z
 	.string()
@@ -35,7 +35,13 @@ export const numericMixinIntegerOptionPredicate = z.object({
 
 export const channelMixinOptionPredicate = z.object({
 	channel_types: z
-		.union(allowedChannelTypes.map((type) => z.literal(type)) as unknown as [ZodTypeAny, ZodTypeAny, ...ZodTypeAny[]])
+		.union(
+			applicationCommandOptionAllowedChannelTypes.map((type) => z.literal(type)) as unknown as [
+				ZodTypeAny,
+				ZodTypeAny,
+				...ZodTypeAny[],
+			],
+		)
 		.array()
 		.optional(),
 });

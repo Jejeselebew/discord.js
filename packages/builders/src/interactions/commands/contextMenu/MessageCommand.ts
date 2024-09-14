@@ -3,7 +3,7 @@ import { isValidationEnabled } from '../../../util/validation.js';
 import { messageCommandPredicate } from './Assertions.js';
 import { ContextMenuCommandBuilder } from './ContextMenuCommand.js';
 
-export class MessageCommandBuilder extends ContextMenuCommandBuilder {
+export class MessageContextCommandBuilder extends ContextMenuCommandBuilder {
 	/**
 	 * {@inheritDoc CommandBuilder.toJSON}
 	 */
